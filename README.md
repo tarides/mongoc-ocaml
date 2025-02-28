@@ -1,3 +1,7 @@
+Bitcoin Price Data from
+
+https://www.kaggle.com/datasets/jkraak/bitcoin-price-dataset?resource=download
+
 Tested in Ubuntu 24.04.2
 
 Installed packages:
