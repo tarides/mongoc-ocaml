@@ -1,7 +1,11 @@
 open Ctypes
 
-type t = Types_generated.t
+type t = Types_generated.t structure
 let t = Types_generated.t
+
+type t_ptr = t Ctypes_static.ptr
+let ptr_t = Ctypes_static.ptr t
+let const_t = const t
 
 let carray_to_string (arr : char CArray.t) : string =
   arr |> CArray.to_list |> List.to_seq |> String.of_seq
@@ -33,5 +37,3 @@ let as_json ?length bson =
   let str = C.Functions.as_json bson length in
   Ctypes_std_views.string_of_char_ptr str
   (* TODO: C.Functions.free (to_voidp str) *)
-
-module Types_generated = Types_generated

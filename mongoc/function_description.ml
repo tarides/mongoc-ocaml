@@ -14,13 +14,13 @@ module Functions(F : Ctypes.FOREIGN) = struct
   end
 
   module Collection = struct
-    let find_with_opts = foreign "mongoc_collection_find_with_opts" (ptr Types.Collection.t @-> ptr (const Bson.Types_generated.t) @-> ptr (const Bson.Types_generated.t) @-> ptr (const Types.Read_prefs.t) @-> returning (ptr Types.Cursor.t))
+    let find_with_opts = foreign "mongoc_collection_find_with_opts" (ptr Types.Collection.t @-> ptr (const Bson.t) @-> ptr (const Bson.t) @-> ptr (const Types.Read_prefs.t) @-> returning (ptr Types.Cursor.t))
     let destroy = foreign "mongoc_collection_destroy"  (ptr Types.Collection.t @-> returning void)
   end
 
   module Cursor = struct
-    let next = foreign "mongoc_cursor_next" (ptr Types.Cursor.t @-> ptr (ptr (const Bson.Types_generated.t)) @-> returning bool)
-    let error = foreign "mongoc_cursor_error" (ptr Types.Cursor.t @-> ptr Bson.Types_generated.Error.t @-> returning bool)
+    let next = foreign "mongoc_cursor_next" (ptr Types.Cursor.t @-> ptr (ptr (const Bson.t)) @-> returning bool)
+    let error = foreign "mongoc_cursor_error" (ptr Types.Cursor.t @-> ptr Bson.Error.t @-> returning bool)
     let destroy = foreign "mongoc_cursor_destroy" (ptr Types.Cursor.t @-> returning void)
   end
 end
