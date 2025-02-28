@@ -1,3 +1,6 @@
 (executable
  (name sample)
  (libraries mongoc))
+
+(cram
+ (deps ./sample.exe))
