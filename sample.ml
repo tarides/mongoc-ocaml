@@ -6,6 +6,10 @@ open Ctypes
 let () =
   let () = Mongoc.C.Functions.init () in
   let host = Ctypes_std_views.char_ptr_of_string "mongodb://127.0.0.1:27017" in
+  if is_null host then begin
+    Printf.fprintf stderr "Failed to connect to MongoDB\n";
+    exit 1;
+  end;
   let client = Mongoc.C.Functions.Client.new_ host in
   let db_name = Ctypes_std_views.char_ptr_of_string "bitcoin" in
   let collection_name = Ctypes_std_views.char_ptr_of_string "price_2017_2023" in
@@ -18,7 +22,7 @@ let () =
   if is_null query then begin
     let message = getf error Bson.Types_generated.Error.message in
     Printf.fprintf stderr "JSON parsing Error: %s\n" (carray_to_string message);
-    exit (-1);
+    exit 1;
   end;
   let null_query = from_voidp Bson.Types_generated.t null in
   let null_read_prefs = from_voidp Mongoc.Types_generated.Read_prefs.t null in
@@ -33,7 +37,7 @@ let () =
   if Mongoc.C.Functions.Cursor.error cursor (Ctypes.addr error) then begin
     let message = getf error Bson.Types_generated.Error.message in
     Printf.fprintf stderr "Cursor Error: %s\n" (carray_to_string message);
-    exit (-1)
+    exit 1
   end;
   Mongoc.C.Functions.Cursor.destroy cursor;
   Mongoc.C.Functions.Collection.destroy collection;
