@@ -1,0 +1,14 @@
+(library
+ (name bson)
+ (ctypes
+  (external_library_name libbson-1.0)
+  (build_flags_resolver pkg_config)
+  (headers (include "bson/bson.h"))
+  (type_description
+   (instance Types)
+   (functor Type_description))
+  (function_description
+   (instance Functions)
+   (functor Function_description))
+  (generated_types Types_generated)
+  (generated_entry_point C)))

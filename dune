@@ -1,0 +1,3 @@
+(executable
+ (name sample)
+ (libraries mongoc))
