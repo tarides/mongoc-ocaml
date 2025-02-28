@@ -19,7 +19,7 @@ module Error = struct
   let message error = getf error Types_generated.Error.message |> carray_to_string
 end
 
-let new_from_json ?len data =
+let new_from_json ?len data : (t_ptr, string) result =
   let len = PosixTypes.Ssize.(Option.fold ~none:minus_one ~some:of_int len) in
   let json = Ctypes_std_views.char_ptr_of_string data in
   let json = coerce (ptr char) (ptr (const uint8_t)) json in
@@ -30,7 +30,7 @@ let new_from_json ?len data =
   else
     Result.Ok bson
 
-let as_json ?length bson =
+let as_json ?length (bson : t_ptr) =
   let length =
     let some u = u |> Unsigned.Size_t.of_int |> allocate size_t in
     Option.fold ~none:(from_voidp size_t null) ~some length in
