@@ -1,5 +1,5 @@
 module Types (F : Ctypes.TYPE) = struct
-  open Ctypes
+  open Ctypes_static
   open F
 
   module Error = struct
