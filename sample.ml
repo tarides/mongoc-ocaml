@@ -25,16 +25,15 @@ let () =
   Printf.printf
     "Bitcoin prices on July 28, 2022, at 10 a.m. during 10 minutes:\n";
   (try
-    while true do
-      match Mongoc.Cursor.next cursor with
-      | Some doc -> Printf.printf "%s\n" (Mongoc.Bson.as_json doc)
-      | None -> raise Exit
-    done
-  with Exit ->
-    ());
-    let|| () = (Mongoc.Cursor.error cursor, "Cursor error") in
-    Mongoc.Cursor.destroy cursor;
-    Mongoc.Collection.destroy collection;
-    Mongoc.Client.destroy client;
-    Mongoc.Uri.destroy uri;
-    Mongoc.cleanup ()
+     while true do
+       match Mongoc.Cursor.next cursor with
+       | Some doc -> Printf.printf "%s\n" (Mongoc.Bson.as_json doc)
+       | None -> raise Exit
+     done
+   with Exit -> ());
+  let|| () = (Mongoc.Cursor.error cursor, "Cursor error") in
+  Mongoc.Cursor.destroy cursor;
+  Mongoc.Collection.destroy collection;
+  Mongoc.Client.destroy client;
+  Mongoc.Uri.destroy uri;
+  Mongoc.cleanup ()
