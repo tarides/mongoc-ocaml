@@ -1,5 +1,4 @@
 open Ctypes
-
 module Bson = Bson
 
 let init = C.Functions.init
@@ -7,6 +6,7 @@ let cleanup = C.Functions.cleanup
 
 module Read_prefs = struct
   type t = Types_generated.Read_prefs.t structure Ctypes_static.ptr
+
   let t = Types_generated.Read_prefs.t
 end
 
@@ -26,25 +26,34 @@ module Cursor = struct
   type t = Types_generated.Cursor.t structure Ctypes_static.ptr
 
   let next (cursor : t) : Bson.t option =
-    let doc = allocate (Ctypes_static.ptr Bson.t) (from_voidp (Ctypes_static.const Bson.t) null) in
+    let doc =
+      allocate (Ctypes_static.ptr Bson.t)
+        (from_voidp (Ctypes_static.const Bson.t) null)
+    in
     if C.Functions.Cursor.next cursor doc then Some !@(!@doc) else None
 
   let error (cursor : t) =
     let error = make Bson.Error.t in
-    if C.Functions.Cursor.error cursor (addr error) then
-      Result.Error error
+    if C.Functions.Cursor.error cursor (addr error) then Result.Error error
     else Ok ()
+
   let destroy (cursor : t) = C.Functions.Cursor.destroy cursor
 end
 
 module Collection = struct
   type t = Types_generated.Collection.t structure Ctypes_static.ptr
 
-  let find_with_opts ?(opts : Bson.t option) ?(read_prefs : Read_prefs.t option) (coll : t) (filter : Bson.t) : Cursor.t =
+  let find_with_opts ?(opts : Bson.t option) ?(read_prefs : Read_prefs.t option)
+      (coll : t) (filter : Bson.t) : Cursor.t =
     let filter_ptr = allocate Bson.t filter in
-    let opts = Option.fold ~some:(allocate Bson.t) ~none:(from_voidp Bson.t null) opts in
-    let read_prefs = Option.value read_prefs ~default:(from_voidp Read_prefs.t null) in
+    let opts =
+      Option.fold ~some:(allocate Bson.t) ~none:(from_voidp Bson.t null) opts
+    in
+    let read_prefs =
+      Option.value read_prefs ~default:(from_voidp Read_prefs.t null)
+    in
     C.Functions.Collection.find_with_opts coll filter_ptr opts read_prefs
+
   let destroy (coll : t) = C.Functions.Collection.destroy coll
 end
 
@@ -73,5 +82,3 @@ module Client = struct
 
   let destroy (client : t) = C.Functions.Client.destroy client
 end
-
-

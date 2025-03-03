@@ -3,7 +3,8 @@
  (ctypes
   (external_library_name libbson-1.0)
   (build_flags_resolver pkg_config)
-  (headers (include "bson/bson.h"))
+  (headers
+   (include "bson/bson.h"))
   (type_description
    (instance Types)
    (functor Type_description))

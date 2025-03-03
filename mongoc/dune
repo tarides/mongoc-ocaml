@@ -3,7 +3,8 @@
  (ctypes
   (external_library_name libmongoc-1.0)
   (build_flags_resolver pkg_config)
-  (headers (include "mongoc/mongoc.h"))
+  (headers
+   (include "mongoc/mongoc.h"))
   (type_description
    (instance Types)
    (functor Type_description))
@@ -12,4 +13,4 @@
    (functor Function_description))
   (generated_types Types_generated)
   (generated_entry_point C))
-  (libraries bson))
+ (libraries bson))
