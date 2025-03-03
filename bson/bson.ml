@@ -4,7 +4,6 @@ type t = Types_generated.t structure
 let t = Types_generated.t
 
 let ptr_t = Ctypes_static.ptr t
-let const_t = const t
 
 let carray_to_string (arr : char CArray.t) : string =
   arr |> CArray.to_list |> List.to_seq |> String.of_seq
