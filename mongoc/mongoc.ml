@@ -1,5 +1,7 @@
 open Ctypes
 
+module Bson = Bson
+
 let init = C.Functions.init
 let cleanup = C.Functions.cleanup
 
