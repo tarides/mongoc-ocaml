@@ -1,23 +1,23 @@
 open Ctypes
 
-type t = Types_generated.t structure
-let t = Types_generated.t
+type t = Types_generated.t Ctypes_static.structure
+let t : t typ = Types_generated.t
 
 module Error = struct
-  type t = (Types_generated.Error.t, [`Struct]) structured
-  let t = Types_generated.Error.t
+  type t = Types_generated.Error.t Ctypes_static.structure
+  let t : t typ = Types_generated.Error.t
+  let ptr = Ctypes_static.ptr t
   let domain (error : t) =
     getf error Types_generated.Error.domain |> Unsigned.UInt32.to_int
-  let code error =
+  let code (error : t) =
     getf error Types_generated.Error.code |> Unsigned.UInt32.to_int
-  let message error =
+  let message (error : t) =
     getf error Types_generated.Error.message
     |> CArray.to_list
     |> List.to_seq
     |> String.of_seq
 end
 
-(* ( const uint8_t * ) *)
 let new_from_json ?len data : (t, string) result =
   let len = PosixTypes.Ssize.(Option.fold ~none:minus_one ~some:of_int len) in
   let json = Ctypes_std_views.char_ptr_of_string data in
@@ -29,7 +29,6 @@ let new_from_json ?len data : (t, string) result =
   else
     Result.Ok !@bson
 
-(*  ( const bson_t * )  *)
 let as_json ?length (bson : t) =
   let ptr = allocate t bson in
   let length =
