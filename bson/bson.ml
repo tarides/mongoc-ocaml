@@ -3,7 +3,6 @@ open Ctypes
 type t = Types_generated.t structure
 let t = Types_generated.t
 
-type t_ptr = t Ctypes_static.ptr
 let ptr_t = Ctypes_static.ptr t
 let const_t = const t
 
@@ -19,7 +18,7 @@ module Error = struct
   let message error = getf error Types_generated.Error.message |> carray_to_string
 end
 
-let new_from_json ?len data : (t_ptr, string) result =
+let new_from_json ?len data : (t ptr, string) result =
   let len = PosixTypes.Ssize.(Option.fold ~none:minus_one ~some:of_int len) in
   let json = Ctypes_std_views.char_ptr_of_string data in
   let json = coerce (ptr char) (ptr (const uint8_t)) json in
@@ -30,7 +29,7 @@ let new_from_json ?len data : (t_ptr, string) result =
   else
     Result.Ok bson
 
-let as_json ?length (bson : t_ptr) =
+let as_json ?length (bson : t ptr) =
   let length =
     let some u = u |> Unsigned.Size_t.of_int |> allocate size_t in
     Option.fold ~none:(from_voidp size_t null) ~some length in

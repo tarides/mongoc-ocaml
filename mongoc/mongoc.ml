@@ -10,7 +10,7 @@ end
 module Cursor = struct
   type t = Types_generated.Cursor.t structure Ctypes_static.ptr
 
-  let next (cursor : t) : Bson.t_ptr option =
+  let next (cursor : t) : Bson.t ptr option =
     let doc = allocate Bson.ptr_t (from_voidp Bson.const_t null) in
     if C.Functions.Cursor.next cursor doc then Some !@doc else None
 
@@ -26,7 +26,7 @@ end
 module Collection = struct
   type t = Types_generated.Collection.t structure Ctypes_static.ptr
 
-  let find_with_opts ?(opts : Bson.t_ptr option) ?(read_prefs : Read_prefs.t option) (coll : t) (filter : Bson.t_ptr) : Cursor.t =
+  let find_with_opts ?(opts : Bson.t ptr option) ?(read_prefs : Read_prefs.t option) (coll : t) (filter : Bson.t ptr) : Cursor.t =
     let opts = Option.value opts ~default:(from_voidp Bson.t null) in
     let read_prefs = Option.value read_prefs ~default:(from_voidp Types_generated.Read_prefs.t null) in
     C.Functions.Collection.find_with_opts coll filter opts read_prefs
