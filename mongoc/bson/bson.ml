@@ -18,14 +18,14 @@ module Error = struct
     |> String.of_seq
 end
 
-let new_from_json ?len data : (t, string) result =
+let new_from_json ?len data : (t, Error.t) result =
   let len = PosixTypes.Ssize.(Option.fold ~none:minus_one ~some:of_int len) in
   let json = Ctypes_std_views.char_ptr_of_string data in
   let json = coerce (ptr char) (ptr (const uint8_t)) json in
   let error = make Types_generated.Error.t in
   let bson = C.Functions.new_from_json json len (addr error) in
   if is_null bson then
-    Result.Error ("JSON parsing Error: " ^ Error.message error)
+    Result.Error error
   else
     Result.Ok !@bson
 

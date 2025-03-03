@@ -10,6 +10,18 @@ module Read_prefs = struct
   let t = Types_generated.Read_prefs.t
 end
 
+module Uri = struct
+  type t = Types_generated.Uri.t structure Ctypes_static.ptr
+
+  let new_with_error uri =
+    let error = make Bson.Error.t in
+    let uri = Ctypes_std_views.char_ptr_of_string uri in
+    let uri = C.Functions.Uri.new_with_error uri (addr error) in
+    if is_null uri then Error error else Ok uri
+
+  let destroy (uri : t) = C.Functions.Uri.destroy uri
+end
+
 module Cursor = struct
   type t = Types_generated.Cursor.t structure Ctypes_static.ptr
 
@@ -20,8 +32,7 @@ module Cursor = struct
   let error (cursor : t) =
     let error = make Bson.Error.t in
     if C.Functions.Cursor.error cursor (addr error) then
-      let message = Bson.Error.message error in
-      Result.Error ("Cursor Error:" ^ message)
+      Result.Error error
     else Ok ()
   let destroy (cursor : t) = C.Functions.Cursor.destroy cursor
 end
@@ -40,10 +51,19 @@ end
 module Client = struct
   type t = Types_generated.Client.t structure Ctypes_static.ptr
 
-  let new_ host : (t, string) result =
+  let new_ host : t option =
     let host = Ctypes_std_views.char_ptr_of_string host in
     let client = C.Functions.Client.new_ host in
-    Result.(if is_null client then Error "Failed to connect to MongoDB" else Ok client)
+    if is_null client then None else Some client
+
+  let new_from_uri (uri : Uri.t) : t option =
+    let client = C.Functions.Client.new_from_uri uri in
+    if is_null client then None else Some client
+
+  let new_from_uri_with_error (uri : Uri.t) : (t, Bson.Error.t) result =
+    let error = make Bson.Error.t in
+    let client = C.Functions.Client.new_from_uri_with_error uri (addr error) in
+    if is_null client then Error error else Ok client
 
   let get_collection (client : t) db_name coll_name : Collection.t =
     let open Ctypes_std_views in

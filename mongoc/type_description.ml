@@ -8,6 +8,16 @@ module Types(F : Ctypes.TYPE) = struct
     let () = seal t
   end
 
+  module Read_prefs = struct
+    type t
+    let t : t structure typ = typedef (structure "_mongoc_read_prefs_t") "mongoc_read_prefs_t"
+  end
+
+  module Uri = struct
+    type t
+    let t : t structure typ = typedef (structure "_mongoc_uri_t") "mongoc_uri_t"
+  end
+
   module Client = struct
     type t
     let t : t structure typ = typedef (structure "_mongoc_client_t") "mongoc_client_t"
@@ -24,8 +34,5 @@ module Types(F : Ctypes.TYPE) = struct
     let t : t structure typ = typedef (structure "_mongoc_cursor_t") "mongoc_cursor_t"
   end
 
-  module Read_prefs = struct
-    type t
-    let t : t structure typ = typedef (structure "_mongoc_read_prefs_t") "mongoc_read_prefs_t"
-  end
+
 end
