@@ -1,6 +1,17 @@
 (executable
  (name sample)
- (libraries mongoc))
+ (libraries mongoc)
+ (modules sample))
+
+(executable
+ (name drop)
+ (libraries mongoc)
+ (modules drop))
+
+(executable
+ (name import)
+ (libraries mongoc)
+ (modules import))
 
 (cram
  (deps ./sample.exe))

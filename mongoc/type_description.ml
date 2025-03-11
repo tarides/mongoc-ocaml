@@ -22,6 +22,13 @@ module Types (F : Ctypes.TYPE) = struct
     let t : t structure typ = typedef (structure "_mongoc_uri_t") "mongoc_uri_t"
   end
 
+  module Database = struct
+    type t
+
+    let t : t structure typ =
+      typedef (structure "_mongoc_database_t") "mongoc_database_t"
+  end
+
   module Client = struct
     type t
 

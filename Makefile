@@ -5,6 +5,9 @@ all: sample
 sample: sample.c 
 	gcc -o $@ $< $(CFLAGS)
 
+import: import.c
+	gcc -o $@ $< $(CFLAGS)
+
 _build/default/sample.exe:
 	dune build ./sample.exe
 
@@ -13,4 +16,4 @@ test: sample
 	dune exec ./sample.exe | md5sum 
 
 clean:
-	rm -fr *.o *~ sample
+	rm -fr *.o *~ sample import

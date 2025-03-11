@@ -1,4 +1,4 @@
-  $ ./sample.exe
+  $ ./sample.exe bitcoin price_2017_2023
   BSON query: { "timestamp" : { "$gt" : "2022-07-28 10:00:00", "$lte" : "2022-07-28 10:10:00" } }
   Bitcoin prices on July 28, 2022, at 10 a.m. during 10 minutes:
   { "_id" : { "$oid" : "67bd9d7e8df26c8f2c89032e" }, "timestamp" : "2022-07-28 10:07:00", "open" : 22965.349999999998545, "high" : 22986.819999999999709, "low" : 22963.400000000001455, "close" : 22978.900000000001455, "volume" : 99.655450000000001864, "quote_asset_volume" : 2289508.24742709985, "number_of_trades" : 2883, "taker_buy_base_asset_volume" : 50.42669000000000068, "taker_buy_quote_asset_volume" : 1158547.177358899964 }

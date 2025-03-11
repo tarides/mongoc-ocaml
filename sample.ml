@@ -14,7 +14,7 @@ let () =
     (Mongoc.Client.new_from_uri_with_error uri, "Failed to connect")
   in
   let collection =
-    Mongoc.Client.get_collection client "bitcoin" "price_2017_2023"
+    Mongoc.Client.get_collection client Sys.argv.(1) Sys.argv.(2)
   in
   let json =
     {json|{ "timestamp" : { "$gt" : "2022-07-28 10:00:00", "$lte" : "2022-07-28 10:10:00" } }|json}

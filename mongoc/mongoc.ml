@@ -25,6 +25,17 @@ module Uri = struct
   let destroy (uri : t) = C.Functions.Uri.destroy uri
 end
 
+module Database = struct
+  type t = Types_generated.Database.t structure ptr
+
+  let drop (db : t) =
+    let error = Ctypes.make Bson.Error.t in
+    if C.Functions.Database.drop db (Ctypes.addr error) then Ok ()
+    else Result.Error error
+
+  let destroy (db : t) = C.Functions.Database.destroy db
+end
+
 module Cursor = struct
   type t = Types_generated.Cursor.t structure ptr
 
@@ -61,6 +72,27 @@ module Collection = struct
     in
     C.Functions.Collection.find_with_opts coll filter_ptr opts read_prefs
 
+  let insert_one ?(opts : Bson.t option) (coll : t) (document : Bson.t) :
+      (Bson.t, Bson.Error.t) result =
+    let error = Ctypes.make Bson.Error.t in
+    let opts =
+      Option.fold
+        ~some:(Ctypes.allocate (const Bson.t))
+        ~none:(Ctypes.from_voidp (const Bson.t) Ctypes.null)
+        opts
+    in
+    let reply = Ctypes.make Bson.t in
+    if
+      C.Functions.Collection.insert_one coll (Ctypes.addr document) opts
+        (Ctypes.addr reply) (Ctypes.addr error)
+    then Ok reply
+    else Error error
+
+  let drop (coll : t) =
+    let error = Ctypes.make Bson.Error.t in
+    if C.Functions.Collection.drop coll (Ctypes.addr error) then Ok ()
+    else Result.Error error
+
   let destroy (coll : t) = C.Functions.Collection.destroy coll
 end
 
@@ -82,6 +114,10 @@ module Client = struct
       C.Functions.Client.new_from_uri_with_error uri (Ctypes.addr error)
     in
     if Ctypes.is_null client then Error error else Ok client
+
+  let get_database (client : t) db_name =
+    let db_name = Ctypes_std_views.char_ptr_of_string db_name in
+    C.Functions.Client.get_database client db_name
 
   let get_collection (client : t) db_name coll_name : Collection.t =
     let open Ctypes_std_views in

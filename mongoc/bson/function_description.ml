@@ -5,7 +5,8 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let new_from_json =
     foreign "bson_new_from_json"
       (ptr (const uint8_t)
-      @-> PosixTypes.ssize_t @-> ptr Types_generated.Error.t
+      @-> PosixTypes.ssize_t
+      @-> ptr Types_generated.Error.t
       @-> returning (ptr Types_generated.t))
 
   let as_json =

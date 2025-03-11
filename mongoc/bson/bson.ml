@@ -10,7 +10,6 @@ module Error = struct
   type t = Types_generated.Error.t structure
 
   let t : t typ = Types_generated.Error.t
-  let ptr = ptr t
 
   let domain (error : t) =
     Ctypes.getf error Types_generated.Error.domain |> Unsigned.UInt32.to_int

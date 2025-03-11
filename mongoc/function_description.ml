@@ -8,10 +8,22 @@ module Functions (F : Ctypes.FOREIGN) = struct
   module Uri = struct
     let new_with_error =
       foreign "mongoc_uri_new_with_error"
-        (ptr (const char) @-> ptr Bson.Error.t @-> returning (ptr Types_generated.Uri.t))
+        (ptr (const char)
+        @-> ptr Bson.Error.t
+        @-> returning (ptr Types_generated.Uri.t))
 
     let destroy =
       foreign "mongoc_uri_destroy" (ptr Types_generated.Uri.t @-> returning void)
+  end
+
+  module Database = struct
+    let drop =
+      foreign "mongoc_database_drop"
+        (ptr Types_generated.Database.t @-> ptr Bson.Error.t @-> returning bool)
+
+    let destroy =
+      foreign "mongoc_database_destroy"
+        (ptr Types_generated.Database.t @-> returning void)
   end
 
   module Client = struct
@@ -21,13 +33,20 @@ module Functions (F : Ctypes.FOREIGN) = struct
 
     let new_from_uri =
       foreign "mongoc_client_new_from_uri"
-        (ptr (const Types_generated.Uri.t) @-> returning (ptr Types_generated.Client.t))
+        (ptr (const Types_generated.Uri.t)
+        @-> returning (ptr Types_generated.Client.t))
 
     let new_from_uri_with_error =
       foreign "mongoc_client_new_from_uri_with_error"
         (ptr (const Types_generated.Uri.t)
         @-> ptr Bson.Error.t
         @-> returning (ptr Types_generated.Client.t))
+
+    let get_database =
+      foreign "mongoc_client_get_database"
+        (ptr Types_generated.Client.t
+        @-> ptr (const char)
+        @-> returning (ptr Types_generated.Database.t))
 
     let get_collection =
       foreign "mongoc_client_get_collection"
@@ -37,7 +56,8 @@ module Functions (F : Ctypes.FOREIGN) = struct
         @-> returning (ptr Types_generated.Collection.t))
 
     let destroy =
-      foreign "mongoc_client_destroy" (ptr Types_generated.Client.t @-> returning void)
+      foreign "mongoc_client_destroy"
+        (ptr Types_generated.Client.t @-> returning void)
   end
 
   module Collection = struct
@@ -49,6 +69,18 @@ module Functions (F : Ctypes.FOREIGN) = struct
         @-> ptr (const Types_generated.Read_prefs.t)
         @-> returning (ptr Types_generated.Cursor.t))
 
+    let insert_one =
+      foreign "mongoc_collection_insert_one"
+        (ptr Types_generated.Collection.t
+        @-> ptr (const Bson.t)
+        @-> ptr (const Bson.t)
+        @-> ptr Bson.t @-> ptr Bson.Error.t @-> returning bool)
+
+    let drop =
+      foreign "mongoc_collection_drop"
+        (ptr Types_generated.Collection.t
+        @-> ptr Bson.Error.t @-> returning bool)
+
     let destroy =
       foreign "mongoc_collection_destroy"
         (ptr Types_generated.Collection.t @-> returning void)
@@ -57,13 +89,16 @@ module Functions (F : Ctypes.FOREIGN) = struct
   module Cursor = struct
     let next =
       foreign "mongoc_cursor_next"
-        (ptr Types_generated.Cursor.t @-> ptr (ptr (const Bson.t)) @-> returning bool)
+        (ptr Types_generated.Cursor.t
+        @-> ptr (ptr (const Bson.t))
+        @-> returning bool)
 
     let error =
       foreign "mongoc_cursor_error"
         (ptr Types_generated.Cursor.t @-> ptr Bson.Error.t @-> returning bool)
 
     let destroy =
-      foreign "mongoc_cursor_destroy" (ptr Types_generated.Cursor.t @-> returning void)
+      foreign "mongoc_cursor_destroy"
+        (ptr Types_generated.Cursor.t @-> returning void)
   end
 end
