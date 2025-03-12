@@ -10,14 +10,19 @@ let drop uri db coll = Omong.drop uri db coll
 let import uri db coll csv = Omong.import uri db coll csv
 
 let find uri db coll json =
-  let cin = open_in json in
-  let json = In_channel.input_all cin in
-  close_in cin;
+  let json = match json with
+    | None -> "{}"
+    | Some filename -> begin
+      let cin = open_in filename in
+      let json = In_channel.input_all cin in
+      close_in cin;
+    json
+    end in
   Omong.find uri db coll json
 
 let uri =
   let doc, docv = ("MongoDB $(docv)", "URI") in
-  Arg.(value @@ opt string default_uri @@ info ~docv ~doc [ "u"; "uri" ])
+  Arg.(value @@ opt string default_uri @@ info ~docv ~doc [ "uri"; "u" ])
 
 let list_cmd =
   let doc = "List database and collections" in
@@ -39,7 +44,7 @@ let drop_cmd =
 
 let json =
   let doc, docv = ("MongoDB JSON query", "JSON") in
-  Arg.(value @@ pos 2 string "" @@ info [] ~doc ~docv)
+  Arg.(value @@ pos 2 (some string) None @@ info [] ~doc ~docv)
 
 let find_cmd =
   let doc = "Query database" in
@@ -48,7 +53,7 @@ let find_cmd =
 
 let csv =
   let doc, docv = ("CSV data", "CSV") in
-  Arg.(value @@ opt (some string) None @@ info [ "csv" ] ~doc ~docv)
+  Arg.(value @@ pos 2 (some string) None @@ info [] ~doc ~docv)
 
 let import_cmd =
   let doc = "Import CSV into collection" in

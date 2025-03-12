@@ -89,7 +89,16 @@ let find uri db_name coll_name json =
   Mongoc.Uri.destroy uri;
   Mongoc.cleanup ()
 
+let json_quote = function
+  | ("true" | "false" | "null") as str -> str
+  | str when Option.is_some (Int64.of_string_opt str) -> str
+  | str when Option.is_some (Float.of_string_opt str) -> str
+  | str -> Printf.sprintf {json|"%s"|json} str
+
 let import uri db coll_name csv =
+  let cin = Option.fold ~none:stdin ~some:open_in csv in
+  let header = input_line cin in
+  let keys = String.split_on_char ',' header in
   let ( let|| ) (r, err) f =
     match r with
     | Error s ->
@@ -104,25 +113,12 @@ let import uri db coll_name csv =
   in
   let coll = Mongoc.Client.get_collection client db coll_name in
   (try
-     let cin = Option.fold ~none:stdin ~some:open_in csv in
      while true do
        let line = input_line cin in
-       let fields = String.split_on_char ',' line |> Array.of_list in
+       let values = String.split_on_char ',' line in
        let json =
-         Printf.sprintf
-           {json|{
-  "timestamp": "%s", "open": %f, "high": %f, "low": %f, "close": %f, "volume": %f, "quote_asset_volume": %f, "number_of_trades": %i, "taker_buy_base_asset_volume": %f, "taker_buy_quote_asset_volume": %f
-  }|json}
-           fields.(0)
-           (float_of_string fields.(1))
-           (float_of_string fields.(2))
-           (float_of_string fields.(3))
-           (float_of_string fields.(4))
-           (float_of_string fields.(5))
-           (float_of_string fields.(6))
-           (int_of_string fields.(7))
-           (float_of_string fields.(8))
-           (float_of_string fields.(9))
+         List.map2 (fun key value -> Printf.sprintf {json|  "%s": %s|json} key (json_quote value)) keys values
+         |> String.concat ",\n" |> Printf.sprintf "{\n%s\n}"
        in
        let|| bson = (Mongoc.Bson.new_from_json json, "JSON parsing error") in
        let|| _ = (Mongoc.Collection.insert_one coll bson, "Insert failure") in
