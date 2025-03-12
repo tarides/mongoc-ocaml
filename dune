@@ -9,4 +9,4 @@
  (modules omong))
 
 (cram
- (deps ./sample.exe ./omong.exe query.json))
+ (deps ./sample.exe ./omong.exe query.json bitcoin_2017_to_2023.csv.head list.js))
