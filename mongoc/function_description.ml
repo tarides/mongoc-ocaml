@@ -17,6 +17,19 @@ module Functions (F : Ctypes.FOREIGN) = struct
   end
 
   module Database = struct
+    let get_collection_names_with_opts =
+      foreign "mongoc_database_get_collection_names_with_opts"
+        (ptr Types_generated.Database.t
+        @-> ptr (const Bson.t)
+        @-> ptr Bson.Error.t
+        @-> returning (ptr (ptr char)))
+
+    let get_collection =
+      foreign "mongoc_database_get_collection"
+        (ptr Types_generated.Database.t
+        @-> ptr (const char)
+        @-> returning (ptr Types_generated.Collection.t))
+
     let drop =
       foreign "mongoc_database_drop"
         (ptr Types_generated.Database.t @-> ptr Bson.Error.t @-> returning bool)
@@ -41,6 +54,13 @@ module Functions (F : Ctypes.FOREIGN) = struct
         (ptr (const Types_generated.Uri.t)
         @-> ptr Bson.Error.t
         @-> returning (ptr Types_generated.Client.t))
+
+    let get_database_names_with_opts =
+      foreign "mongoc_client_get_database_names_with_opts"
+        (ptr Types_generated.Client.t
+        @-> ptr (const Bson.t)
+        @-> ptr Bson.Error.t
+        @-> returning (ptr (ptr char)))
 
     let get_database =
       foreign "mongoc_client_get_database"
@@ -68,6 +88,14 @@ module Functions (F : Ctypes.FOREIGN) = struct
         @-> ptr (const Bson.t)
         @-> ptr (const Types_generated.Read_prefs.t)
         @-> returning (ptr Types_generated.Cursor.t))
+
+    let count_documents =
+      foreign "mongoc_collection_count_documents"
+        (ptr Types_generated.Collection.t
+        @-> ptr (const Bson.t)
+        @-> ptr (const Bson.t)
+        @-> ptr (const Types_generated.Read_prefs.t)
+        @-> ptr Bson.t @-> ptr Bson.Error.t @-> returning int64_t)
 
     let insert_one =
       foreign "mongoc_collection_insert_one"

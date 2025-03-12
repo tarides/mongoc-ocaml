@@ -1,0 +1,3 @@
+(library
+ (name omong)
+ (libraries mongoc))

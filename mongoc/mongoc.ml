@@ -25,16 +25,16 @@ module Uri = struct
   let destroy (uri : t) = C.Functions.Uri.destroy uri
 end
 
-module Database = struct
-  type t = Types_generated.Database.t structure ptr
-
-  let drop (db : t) =
-    let error = Ctypes.make Bson.Error.t in
-    if C.Functions.Database.drop db (Ctypes.addr error) then Ok ()
-    else Result.Error error
-
-  let destroy (db : t) = C.Functions.Database.destroy db
-end
+let string_list_of_char_ptr_ptr (pp : char ptr ptr) : string list =
+  let ( +@ ) = Ctypes.( +@ ) in
+  let rec loop i acc =
+    let p = !@(pp +@ i) in
+    if Ctypes.is_null p then List.rev acc
+    else
+      let s = Ctypes_std_views.string_of_char_ptr p in
+      loop (i + 1) (s :: acc)
+  in
+  loop 0 []
 
 module Cursor = struct
   type t = Types_generated.Cursor.t structure ptr
@@ -72,6 +72,27 @@ module Collection = struct
     in
     C.Functions.Collection.find_with_opts coll filter_ptr opts read_prefs
 
+  let count_documents ?(opts : Bson.t option)
+      ?(read_prefs : Read_prefs.t option) (coll : t) (filter : Bson.t) :
+      (Int64.t, Bson.Error.t) result =
+    let filter_ptr = Ctypes.allocate Bson.t filter in
+    let opts =
+      Option.fold ~some:(Ctypes.allocate Bson.t)
+        ~none:(Ctypes.from_voidp Bson.t Ctypes.null)
+        opts
+    in
+    let read_prefs =
+      Option.value read_prefs
+        ~default:(Ctypes.from_voidp Read_prefs.t Ctypes.null)
+    in
+    let reply = Ctypes.from_voidp Bson.t Ctypes.null in
+    let error = Ctypes.make Bson.Error.t in
+    let count =
+      C.Functions.Collection.count_documents coll filter_ptr opts read_prefs
+        reply (Ctypes.addr error)
+    in
+    if count = Int64.minus_one then Error error else Ok count
+
   let insert_one ?(opts : Bson.t option) (coll : t) (document : Bson.t) :
       (Bson.t, Bson.Error.t) result =
     let error = Ctypes.make Bson.Error.t in
@@ -96,6 +117,35 @@ module Collection = struct
   let destroy (coll : t) = C.Functions.Collection.destroy coll
 end
 
+module Database = struct
+  type t = Types_generated.Database.t structure ptr
+
+  let get_collection_names_with_opts ?(opts : Bson.t option) (db : t) :
+      (string list, Bson.Error.t) result =
+    let error = Ctypes.make Bson.Error.t in
+    let opts =
+      Option.fold ~some:(Ctypes.allocate Bson.t)
+        ~none:(Ctypes.from_voidp Bson.t Ctypes.null)
+        opts
+    in
+    let f =
+      C.Functions.Database.get_collection_names_with_opts db opts
+        (Ctypes.addr error)
+    in
+    if Ctypes.is_null f then Error error else Ok (string_list_of_char_ptr_ptr f)
+
+  let get_collection (db : t) (name : string) : Collection.t =
+    let name = Ctypes_std_views.char_ptr_of_string name in
+    C.Functions.Database.get_collection db name
+
+  let drop (db : t) =
+    let error = Ctypes.make Bson.Error.t in
+    if C.Functions.Database.drop db (Ctypes.addr error) then Ok ()
+    else Result.Error error
+
+  let destroy (db : t) = C.Functions.Database.destroy db
+end
+
 module Client = struct
   type t = Types_generated.Client.t structure ptr
 
@@ -114,6 +164,20 @@ module Client = struct
       C.Functions.Client.new_from_uri_with_error uri (Ctypes.addr error)
     in
     if Ctypes.is_null client then Error error else Ok client
+
+  let get_database_names_with_opts ?(opts : Bson.t option) (client : t) :
+      (string list, Bson.Error.t) result =
+    let error = Ctypes.make Bson.Error.t in
+    let opts =
+      Option.fold ~some:(Ctypes.allocate Bson.t)
+        ~none:(Ctypes.from_voidp Bson.t Ctypes.null)
+        opts
+    in
+    let f =
+      C.Functions.Client.get_database_names_with_opts client opts
+        (Ctypes.addr error)
+    in
+    if Ctypes.is_null f then Error error else Ok (string_list_of_char_ptr_ptr f)
 
   let get_database (client : t) db_name =
     let db_name = Ctypes_std_views.char_ptr_of_string db_name in

@@ -4,14 +4,14 @@
  (modules sample))
 
 (executable
- (name drop)
- (libraries mongoc)
- (modules drop))
-
-(executable
  (name import)
  (libraries mongoc)
  (modules import))
+
+(executable
+ (name omong)
+ (libraries omong cmdliner)
+ (modules omong))
 
 (cram
  (deps ./sample.exe))
