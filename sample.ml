@@ -21,7 +21,7 @@ let () =
   in
   Printf.printf "BSON query: %s\n" json;
   let|| query = (Mongoc.Bson.new_from_json json, "JSON parsing error") in
-  let cursor = Mongoc.Collection.find_with_opts collection query in
+  let cursor = Mongoc.Collection.find collection query in
   Printf.printf
     "Bitcoin prices on July 28, 2022, at 10 a.m. during 10 minutes:\n";
   (try

@@ -58,7 +58,7 @@ end
 module Collection = struct
   type t = Types_generated.Collection.t structure ptr
 
-  let find_with_opts ?(opts : Bson.t option) ?(read_prefs : Read_prefs.t option)
+  let find ?(opts : Bson.t option) ?(read_prefs : Read_prefs.t option)
       (coll : t) (filter : Bson.t) : Cursor.t =
     let filter_ptr = Ctypes.allocate Bson.t filter in
     let opts =
@@ -120,7 +120,7 @@ end
 module Database = struct
   type t = Types_generated.Database.t structure ptr
 
-  let get_collection_names_with_opts ?(opts : Bson.t option) (db : t) :
+  let get_collection_names ?(opts : Bson.t option) (db : t) :
       (string list, Bson.Error.t) result =
     let error = Ctypes.make Bson.Error.t in
     let opts =
@@ -165,7 +165,7 @@ module Client = struct
     in
     if Ctypes.is_null client then Error error else Ok client
 
-  let get_database_names_with_opts ?(opts : Bson.t option) (client : t) :
+  let get_database_names ?(opts : Bson.t option) (client : t) :
       (string list, Bson.Error.t) result =
     let error = Ctypes.make Bson.Error.t in
     let opts =

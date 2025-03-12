@@ -38,8 +38,7 @@ end
 module Collection : sig
   type t
 
-  val find_with_opts :
-    ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> t -> Bson.t -> Cursor.t
+  val find : ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> t -> Bson.t -> Cursor.t
 
   val count_documents :
     ?opts:Bson.t ->
@@ -56,7 +55,7 @@ end
 module Database : sig
   type t
 
-  val get_collection_names_with_opts :
+  val get_collection_names :
     ?opts:Bson.t -> t -> (string list, Bson.Error.t) result
 
   val get_collection : t -> string -> Collection.t
@@ -71,7 +70,7 @@ module Client : sig
   val new_from_uri : Uri.t -> t option
   val new_from_uri_with_error : Uri.t -> (t, Bson.Error.t) result
 
-  val get_database_names_with_opts :
+  val get_database_names :
     ?opts:Bson.t -> t -> (string list, Bson.Error.t) result
 
   val get_database : t -> string -> Database.t
