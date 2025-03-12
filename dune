@@ -4,14 +4,9 @@
  (modules sample))
 
 (executable
- (name import)
- (libraries mongoc)
- (modules import))
-
-(executable
  (name omong)
  (libraries omong cmdliner)
  (modules omong))
 
 (cram
- (deps ./sample.exe))
+ (deps ./sample.exe ./omong.exe query.json))

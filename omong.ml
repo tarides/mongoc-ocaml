@@ -22,7 +22,7 @@ let find uri db coll json =
 
 let uri =
   let doc, docv = ("MongoDB $(docv)", "URI") in
-  Arg.(value @@ opt string default_uri @@ info ~docv ~doc [ "uri"; "u" ])
+  Arg.(value @@ opt string default_uri @@ info ~docv ~doc [ "u"; "uri" ])
 
 let list_cmd =
   let doc = "List database and collections" in

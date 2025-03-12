@@ -1,6 +1,10 @@
-  $ ./sample.exe bitcoin price_2017_2023
-  BSON query: { "timestamp" : { "$gt" : "2022-07-28 10:00:00", "$lte" : "2022-07-28 10:10:00" } }
-  Bitcoin prices on July 28, 2022, at 10 a.m. during 10 minutes:
+  $ ./sample.exe bitcoin price_2017_2023 query.json
+  BSON query: {
+    "timestamp": {
+      "$gt": "2022-07-28 10:00:00",
+      "$lte": "2022-07-28 10:10:00"
+    }
+  }
   { "_id" : { "$oid" : "67bd9d7e8df26c8f2c89032e" }, "timestamp" : "2022-07-28 10:07:00", "open" : 22965.349999999998545, "high" : 22986.819999999999709, "low" : 22963.400000000001455, "close" : 22978.900000000001455, "volume" : 99.655450000000001864, "quote_asset_volume" : 2289508.24742709985, "number_of_trades" : 2883, "taker_buy_base_asset_volume" : 50.42669000000000068, "taker_buy_quote_asset_volume" : 1158547.177358899964 }
   { "_id" : { "$oid" : "67bd9d7e8df26c8f2c890330" }, "timestamp" : "2022-07-28 10:06:00", "open" : 22969.459999999999127, "high" : 22973.0, "low" : 22953.819999999999709, "close" : 22965.349999999998545, "volume" : 58.235190000000002897, "quote_asset_volume" : 1337290.2220526000019, "number_of_trades" : 2387, "taker_buy_base_asset_volume" : 27.306979999999999364, "taker_buy_quote_asset_volume" : 627104.69109830004163 }
   { "_id" : { "$oid" : "67bd9d7e8df26c8f2c890331" }, "timestamp" : "2022-07-28 10:05:00", "open" : 22976.709999999999127, "high" : 22978.75, "low" : 22960.169999999998254, "close" : 22969.459999999999127, "volume" : 56.626379999999997494, "quote_asset_volume" : 1300590.3886011999566, "number_of_trades" : 2479, "taker_buy_base_asset_volume" : 27.216889999999999361, "taker_buy_quote_asset_volume" : 625156.34383380005602 }

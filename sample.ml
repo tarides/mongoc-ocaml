@@ -16,14 +16,12 @@ let () =
   let collection =
     Mongoc.Client.get_collection client Sys.argv.(1) Sys.argv.(2)
   in
-  let json =
-    {json|{ "timestamp" : { "$gt" : "2022-07-28 10:00:00", "$lte" : "2022-07-28 10:10:00" } }|json}
-  in
-  Printf.printf "BSON query: %s\n" json;
+  let cin = open_in Sys.argv.(3) in
+  let json = In_channel.input_all cin in
+  close_in cin;
+  Printf.printf "BSON query: %s" json;
   let|| query = (Mongoc.Bson.new_from_json json, "JSON parsing error") in
   let cursor = Mongoc.Collection.find collection query in
-  Printf.printf
-    "Bitcoin prices on July 28, 2022, at 10 a.m. during 10 minutes:\n";
   (try
      while true do
        match Mongoc.Cursor.next cursor with
