@@ -1,11 +1,11 @@
+let ( let|| ) (r, err) f =
+match r with
+| Error s ->
+    Printf.fprintf stderr "%s: %s\n" err (Mongoc.Bson.Error.message s);
+    exit 1
+| Ok x -> f x
+
 let list uri : (string * string) list =
-  let ( let|| ) (r, err) f =
-    match r with
-    | Error s ->
-        Printf.fprintf stderr "%s: %s\n" err (Mongoc.Bson.Error.message s);
-        exit 1
-    | Ok x -> f x
-  in
   let () = Mongoc.init () in
   let|| uri = (Mongoc.Uri.new_with_error uri, "Unrecognized URI") in
   let|| client =
@@ -35,13 +35,6 @@ let list uri : (string * string) list =
   u
 
 let drop uri db_name coll_name =
-  let ( let|| ) (r, err) f =
-    match r with
-    | Error s ->
-        Printf.fprintf stderr "%s: %s\n" err (Mongoc.Bson.Error.message s);
-        exit 1
-    | Ok x -> f x
-  in
   let () = Mongoc.init () in
   let|| uri = (Mongoc.Uri.new_with_error uri, "Unrecognized URI") in
   let|| client =
@@ -59,13 +52,6 @@ let drop uri db_name coll_name =
   Mongoc.cleanup ()
 
 let find uri db_name coll_name json =
-  let ( let|| ) (r, err) f =
-    match r with
-    | Error s ->
-        Printf.fprintf stderr "%s: %s\n" err (Mongoc.Bson.Error.message s);
-        exit 1
-    | Ok x -> f x
-  in
   let () = Mongoc.init () in
   let|| uri = (Mongoc.Uri.new_with_error uri, "Unrecognized URI") in
   let|| client =
@@ -99,13 +85,6 @@ let import uri db coll_name csv =
   let cin = Option.fold ~none:stdin ~some:open_in csv in
   let header = input_line cin in
   let keys = String.split_on_char ',' header in
-  let ( let|| ) (r, err) f =
-    match r with
-    | Error s ->
-        Printf.fprintf stderr "%s: %s\n" err (Mongoc.Bson.Error.message s);
-        exit 1
-    | Ok x -> f x
-  in
   let () = Mongoc.init () in
   let|| uri = (Mongoc.Uri.new_with_error uri, "Unrecognized URI") in
   let|| client =
