@@ -14,8 +14,10 @@ let result_app f x =
   | Error f, _ -> Error f
   | Ok f, Ok x -> Ok (f x)
 
+let wrap (f, g, x) = (result_app (Ok f), g, Ok x)
+
 let list uri : (string * string) list =
-  let|| () = Mongoc.(result_app (Ok init), cleanup, Ok ()) in
+  let|| () = wrap Mongoc.(init, cleanup, ()) in
   let|| uri = Mongoc.Uri.(new_with_error, destroy, uri) in
   let|| client = Mongoc.Client.(new_from_uri_with_error, destroy, uri) in
   let|| dbs = Mongoc.Client.(get_database_names ?opts:None, ignore, client) in
@@ -38,41 +40,32 @@ let list uri : (string * string) list =
     dbs
 
 let drop uri db_name coll_name =
-  let|| () = Mongoc.(result_app (Ok init), cleanup, Ok ()) in
+  let|| () = wrap Mongoc.(init, cleanup, ()) in
   let|| uri = Mongoc.Uri.(new_with_error, destroy, uri) in
   let|| client = Mongoc.Client.(new_from_uri_with_error, destroy, uri) in
   let|| db =
-    Mongoc.
-      ( result_app (Ok (Client.get_database client)),
-        Database.destroy,
-        Ok db_name )
+    wrap Mongoc.(Client.get_database client, Database.destroy, db_name)
   in
   let|| coll =
-    Mongoc.
-      ( result_app (Ok (Database.get_collection db)),
-        Collection.destroy,
-        Ok coll_name )
+    wrap Mongoc.(Database.get_collection db, Collection.destroy, coll_name)
   in
   let|| () = Mongoc.Collection.(drop, ignore, coll) in
   let|| () = Mongoc.Database.(drop, ignore, db) in
   ()
 
-let client_get_collection client db =
-  result_app (Ok (Mongoc.Client.get_collection client db))
-
 let find uri db_name coll_name json =
-  let|| () = Mongoc.(result_app (Ok init), cleanup, Ok ()) in
+  let|| () = wrap Mongoc.(init, cleanup, ()) in
   let|| uri = Mongoc.Uri.(new_with_error, destroy, uri) in
   let|| client = Mongoc.Client.(new_from_uri_with_error, destroy, uri) in
+  let|| db =
+    wrap Mongoc.(Client.get_database client, Database.destroy, db_name)
+  in
   let|| coll =
-    Mongoc.
-      (client_get_collection client db_name, Collection.destroy, Ok coll_name)
+    wrap Mongoc.(Database.get_collection db, Collection.destroy, coll_name)
   in
   Printf.printf "BSON query: %s\n" json;
   let|| query = Mongoc.Bson.(new_from_json ?len:None, ignore, json) in
-  let|| cursor =
-    Mongoc.(result_app (Ok (Collection.find coll)), Cursor.destroy, Ok query)
-  in
+  let|| cursor = wrap Mongoc.(Collection.find coll, Cursor.destroy, query) in
   (try
      while true do
        match Mongoc.Cursor.next cursor with
@@ -93,12 +86,14 @@ let import uri db_name coll_name csv =
   let cin = Option.fold ~none:stdin ~some:open_in csv in
   let header = input_line cin in
   let keys = String.split_on_char ',' header in
-  let|| () = Mongoc.(result_app (Ok init), cleanup, Ok ()) in
+  let|| () = wrap Mongoc.(init, cleanup, ()) in
   let|| uri = Mongoc.Uri.(new_with_error, destroy, uri) in
   let|| client = Mongoc.Client.(new_from_uri_with_error, destroy, uri) in
+  let|| db =
+    wrap Mongoc.(Client.get_database client, Database.destroy, db_name)
+  in
   let|| coll =
-    Mongoc.
-      (client_get_collection client db_name, Collection.destroy, Ok coll_name)
+    wrap Mongoc.(Database.get_collection db, Collection.destroy, coll_name)
   in
   (try
      while true do
