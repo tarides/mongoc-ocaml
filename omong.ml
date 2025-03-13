@@ -10,14 +10,15 @@ let drop uri db coll = Omong.drop uri db coll
 let import uri db coll csv = Omong.import uri db coll csv
 
 let find uri db coll json =
-  let json = match json with
+  let json =
+    match json with
     | None -> "{}"
-    | Some filename -> begin
-      let cin = open_in filename in
-      let json = In_channel.input_all cin in
-      close_in cin;
-    json
-    end in
+    | Some filename ->
+        let cin = open_in filename in
+        let json = In_channel.input_all cin in
+        close_in cin;
+        json
+  in
   Omong.find uri db coll json
 
 let uri =
