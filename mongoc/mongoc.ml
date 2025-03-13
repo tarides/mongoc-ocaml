@@ -117,7 +117,17 @@ module Collection = struct
   let destroy (coll : t) = C.Functions.Collection.destroy coll
 end
 
-module Database = struct
+module rec Database : sig
+  type t
+
+  val get_collection_names :
+    ?opts:Bson.t -> t -> (string list, Bson.Error.t) result
+
+  val get_collection : t -> string -> Collection.t
+  val drop : t -> (unit, Bson.Error.t) result
+  val destroy : t -> unit
+  val of_client : Client.t -> string -> t
+end = struct
   type t = Types_generated.Database.t structure ptr
 
   let get_collection_names ?(opts : Bson.t option) (db : t) :
@@ -144,9 +154,23 @@ module Database = struct
     else Result.Error error
 
   let destroy (db : t) = C.Functions.Database.destroy db
+  let of_client (client : Client.t) name = Client.get_database client name
 end
 
-module Client = struct
+and Client : sig
+  type t
+
+  val new_ : string -> t option
+  val new_from_uri : Uri.t -> t option
+  val new_from_uri_with_error : Uri.t -> (t, Bson.Error.t) result
+
+  val get_database_names :
+    ?opts:Bson.t -> t -> (string list, Bson.Error.t) result
+
+  val get_database : t -> string -> Database.t
+  val get_collection : t -> string -> string -> Collection.t
+  val destroy : t -> unit
+end = struct
   type t = Types_generated.Client.t structure ptr
 
   let new_ host : t option =

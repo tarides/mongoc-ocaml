@@ -52,7 +52,7 @@ module Collection : sig
   val destroy : t -> unit
 end
 
-module Database : sig
+module rec Database : sig
   type t
 
   val get_collection_names :
@@ -61,9 +61,10 @@ module Database : sig
   val get_collection : t -> string -> Collection.t
   val drop : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
+  val of_client : Client.t -> string -> t
 end
 
-module Client : sig
+and Client : sig
   type t
 
   val new_ : string -> t option
