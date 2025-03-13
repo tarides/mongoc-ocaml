@@ -22,18 +22,11 @@ let list uri : (string * string) list =
   let|| client = Mongoc.Client.(new_from_uri_with_error, destroy, uri) in
   let|| dbs = Mongoc.Client.(get_database_names ?opts:None, ignore, client) in
   List.concat_map
-    (fun db_name ->
-      let|| db = wrap Mongoc.Database.(from_client client, destroy, db_name) in
-      let|| colls =
-        Mongoc.Database.(get_collection_names ?opts:None, ignore, db)
-      in
-      List.map
-        (fun coll_name ->
-          let|| _ =
-            wrap Mongoc.Collection.(from_database db, destroy, coll_name)
-          in
-          (db_name, coll_name))
-        colls)
+    Mongoc.Database.(
+      fun db_name ->
+        let|| db = wrap (from_client client, destroy, db_name) in
+        let|| colls = (get_collection_names ?opts:None, ignore, db) in
+        List.map (fun coll_name -> (db_name, coll_name)) colls)
     dbs
 
 let drop uri db_name coll_name =
