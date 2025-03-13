@@ -1,5 +1,13 @@
 val init : unit -> unit
+(** Initialize the MongoDB C Driver by calling [init] exactly once at the
+    beginning of your program. It is responsible for initializing global state
+    such as process counters, SSL, and threading primitives. *)
+
 val cleanup : unit -> unit
+(** Call [cleanup] exactly once at the end of your program to release all memory
+    and other resources allocated by the driver. You must not call any other
+    MongoDB C Driver functions after [cleanup]. Note that [init] does not
+    reinitialize the driver after [cleanup]. *)
 
 module Bson : sig
   module Error : sig
@@ -50,7 +58,7 @@ module rec Collection : sig
   val insert_one : ?opts:Bson.t -> t -> Bson.t -> (Bson.t, Bson.Error.t) result
   val drop : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
-  val of_database : Database.t -> string -> t
+  val from_database : Database.t -> string -> t
 end
 
 and Database : sig
@@ -62,7 +70,7 @@ and Database : sig
   val get_collection : t -> string -> Collection.t
   val drop : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
-  val of_client : Client.t -> string -> t
+  val from_client : Client.t -> string -> t
 end
 
 and Client : sig

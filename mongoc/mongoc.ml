@@ -70,7 +70,7 @@ module rec Collection : sig
   val insert_one : ?opts:Bson.t -> t -> Bson.t -> (Bson.t, Bson.Error.t) result
   val drop : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
-  val of_database : Database.t -> string -> t
+  val from_database : Database.t -> string -> t
 end = struct
   type t = Types_generated.Collection.t structure ptr
 
@@ -131,7 +131,7 @@ end = struct
     else Result.Error error
 
   let destroy (coll : t) = C.Functions.Collection.destroy coll
-  let of_database (db : Database.t) name = Database.get_collection db name
+  let from_database (db : Database.t) name = Database.get_collection db name
 end
 
 and Database : sig
@@ -143,7 +143,7 @@ and Database : sig
   val get_collection : t -> string -> Collection.t
   val drop : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
-  val of_client : Client.t -> string -> t
+  val from_client : Client.t -> string -> t
 end = struct
   type t = Types_generated.Database.t structure ptr
 
@@ -171,7 +171,7 @@ end = struct
     else Result.Error error
 
   let destroy (db : t) = C.Functions.Database.destroy db
-  let of_client (client : Client.t) name = Client.get_database client name
+  let from_client (client : Client.t) name = Client.get_database client name
 end
 
 and Client : sig
