@@ -35,7 +35,7 @@ module Cursor : sig
   val destroy : t -> unit
 end
 
-module Collection : sig
+module rec Collection : sig
   type t
 
   val find : ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> t -> Bson.t -> Cursor.t
@@ -50,9 +50,10 @@ module Collection : sig
   val insert_one : ?opts:Bson.t -> t -> Bson.t -> (Bson.t, Bson.Error.t) result
   val drop : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
+  val of_database : Database.t -> string -> t
 end
 
-module rec Database : sig
+and Database : sig
   type t
 
   val get_collection_names :

@@ -55,7 +55,23 @@ module Cursor = struct
   let destroy (cursor : t) = C.Functions.Cursor.destroy cursor
 end
 
-module Collection = struct
+module rec Collection : sig
+  type t = Types_generated.Collection.t structure ptr
+
+  val find : ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> t -> Bson.t -> Cursor.t
+
+  val count_documents :
+    ?opts:Bson.t ->
+    ?read_prefs:Read_prefs.t ->
+    t ->
+    Bson.t ->
+    (Int64.t, Bson.Error.t) result
+
+  val insert_one : ?opts:Bson.t -> t -> Bson.t -> (Bson.t, Bson.Error.t) result
+  val drop : t -> (unit, Bson.Error.t) result
+  val destroy : t -> unit
+  val of_database : Database.t -> string -> t
+end = struct
   type t = Types_generated.Collection.t structure ptr
 
   let find ?(opts : Bson.t option) ?(read_prefs : Read_prefs.t option)
@@ -115,10 +131,11 @@ module Collection = struct
     else Result.Error error
 
   let destroy (coll : t) = C.Functions.Collection.destroy coll
+  let of_database (db : Database.t) name = Database.get_collection db name
 end
 
-module rec Database : sig
-  type t
+and Database : sig
+  type t = Types_generated.Database.t structure ptr
 
   val get_collection_names :
     ?opts:Bson.t -> t -> (string list, Bson.Error.t) result
@@ -158,7 +175,7 @@ end = struct
 end
 
 and Client : sig
-  type t
+  type t = Types_generated.Client.t structure ptr
 
   val new_ : string -> t option
   val new_from_uri : Uri.t -> t option
