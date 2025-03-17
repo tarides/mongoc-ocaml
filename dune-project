@@ -1,5 +1,6 @@
 (lang dune 3.16)
 (using ctypes 0.3)
+(name ocaml-libmongoc)
 (generate_opam_files true)
 (package
  (name ocaml-libmongoc)
