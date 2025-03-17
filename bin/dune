@@ -1,0 +1,10 @@
+(executable
+ (name omong)
+ (libraries omong cmdliner))
+
+(cram
+ (deps
+  ./omong.exe
+  query.json
+  bitcoin_2017_to_2023.csv.head
+  list.js))
