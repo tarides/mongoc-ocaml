@@ -1,6 +1,6 @@
 (library
  (name bson)
- (public_name ocaml-libmongoc.mongoc.bson)
+ (public_name ocaml-mongoc.mongoc.bson)
  (ctypes
   (external_library_name libbson-1.0)
   (build_flags_resolver pkg_config)
