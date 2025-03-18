@@ -2,6 +2,11 @@
 opam-version: "2.0"
 synopsis: "OCaml binding of the libmongoc library"
 description: "OCaml binding of the MongoDB client library for C, libmongoc"
+maintainer: ["Cuihtlauac ALVARADO"]
+authors: ["Cuihtlauac ALVARADO"]
+license: "ISC"
+homepage: "https://github.com/tarides/ocaml-mongoc"
+bug-reports: "https://github.com/tarides/ocaml-mongoc/issues"
 depends: [
   "dune" {>= "3.16" & build}
   "ocamlformat" {build}
@@ -23,3 +28,4 @@ build: [
     "@doc" {with-doc}
   ]
 ]
+dev-repo: "git+https://github.com/tarides/ocaml-mongoc.git"

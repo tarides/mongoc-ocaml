@@ -9,7 +9,7 @@
  (maintainers "Cuihtlauac ALVARADO")
  (authors "Cuihtlauac ALVARADO")
  (source (github tarides/ocaml-mongoc))
- (licence ISC)
+ (license ISC)
  (depends
   (dune :build)
   (ocamlformat :build)
