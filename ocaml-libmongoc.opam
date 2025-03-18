@@ -5,6 +5,7 @@ description: "OCaml binding of the MongoDB client library for C, libmongoc"
 depends: [
   "dune" {>= "3.16" & build}
   "ocamlformat" {build}
+  "cmdliner"
   "ctypes"
   "odoc" {with-doc}
 ]

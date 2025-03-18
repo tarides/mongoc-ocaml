@@ -9,4 +9,5 @@
  (depends
   (dune :build)
   (ocamlformat :build)
+  cmdliner
   ctypes))
