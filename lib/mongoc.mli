@@ -37,8 +37,9 @@ module Bson : sig
   end
 
   type t
+  (** Binary JSON document abstration. *)
 
-  val new_from_json : ?len:int -> string -> (t, Error.t) result
+  val new_from_json : ?length:int -> string -> (t, Error.t) result
   (** [new_from_json data] function allocates and initializes a new [t] by
       parsing the JSON found in data. Only a single JSON object may exist in
       data or an error will be returned. *)
@@ -67,6 +68,7 @@ module Uri : sig
   type t
 
   val new_with_error : string -> (t, Bson.Error.t) result
+  val get_database : t -> string option
   val destroy : t -> unit
 end
 

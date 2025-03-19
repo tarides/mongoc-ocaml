@@ -34,6 +34,11 @@ module Uri = struct
     let uri = C.Functions.Uri.new_with_error uri (Ctypes.addr error) in
     if Ctypes.is_null uri then Error error else Ok uri
 
+  let get_database t =
+    let db = C.Functions.Uri.get_database t in
+    if Ctypes.is_null db then None
+    else Some (Ctypes_std_views.string_of_char_ptr db)
+
   let destroy (uri : t) = C.Functions.Uri.destroy uri
 end
 

@@ -51,7 +51,7 @@ let find uri db_name coll_name json =
   let|| db = wrap Mongoc.Database.(from_client client, destroy, db_name) in
   let|| coll = wrap Mongoc.Collection.(from_database db, destroy, coll_name) in
   Printf.printf "BSON query: %s\n" json;
-  let|| query = Mongoc.Bson.(new_from_json ?len:None, ignore, json) in
+  let|| query = Mongoc.Bson.(new_from_json ?length:None, ignore, json) in
   let|| cursor = wrap Mongoc.(Collection.find coll, Cursor.destroy, query) in
   Seq.unfold cursor_step cursor
   |> Seq.map Mongoc.Bson.as_json
@@ -96,9 +96,9 @@ let import uri db_name coll_name csv =
   |> Seq.map (String.split_on_char ',')
   |> Seq.map (json_object keys)
   |> Seq.iter (fun json ->
-         let|| bson = Mongoc.Bson.(new_from_json ?len:None, ignore, json) in
+         let|| bson = Mongoc.Bson.(new_from_json ?length:None, ignore, json) in
          let|| _ = Mongoc.Collection.(insert_one coll, ignore, bson) in
          ());
-  let|| filter = Mongoc.Bson.(new_from_json ?len:None, ignore, "{}") in
+  let|| filter = Mongoc.Bson.(new_from_json ?length:None, ignore, "{}") in
   let|| count = Mongoc.Collection.(count_documents coll, ignore, filter) in
   Printf.printf "Collection %s has %Li documents" coll_name count

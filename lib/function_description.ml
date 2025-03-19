@@ -24,6 +24,10 @@ module Functions (F : Ctypes.FOREIGN) = struct
         @-> ptr Bson.Error.t
         @-> returning (ptr Types_generated.Uri.t))
 
+    let get_database =
+      foreign "mongoc_uri_get_database"
+        (ptr (const Types_generated.Uri.t) @-> returning (ptr (const char)))
+
     let destroy =
       foreign "mongoc_uri_destroy" (ptr Types_generated.Uri.t @-> returning void)
   end

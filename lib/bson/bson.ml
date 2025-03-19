@@ -34,8 +34,10 @@ let get_minor_version () =
 let get_micro_version () =
   () |> C.Functions.get_micro_version |> Signed.Int.to_int
 
-let new_from_json ?len data : (t, Error.t) result =
-  let len = PosixTypes.Ssize.(Option.fold ~none:minus_one ~some:of_int len) in
+let new_from_json ?length data : (t, Error.t) result =
+  let len =
+    PosixTypes.Ssize.(Option.fold ~none:minus_one ~some:of_int length)
+  in
   let json = Ctypes_std_views.char_ptr_of_string data in
   let json = Ctypes.coerce (ptr char) (ptr (const uint8_t)) json in
   let error = Ctypes.make Types_generated.Error.t in
