@@ -1,4 +1,4 @@
-(** Binding of the MongoDB client library, libmongoc *)
+(** Binding of the {{:https://mongoc.org/}MongoDB C client library}, {{:https://mongoc.org/libmongoc/current/index.html}libmongoc} *)
 
 val init : unit -> unit
 (** Initialize the MongoDB C Driver by calling [init] exactly once at the
@@ -11,13 +11,20 @@ val cleanup : unit -> unit
     MongoDB C Driver functions after [cleanup]. Note that [init] does not
     reinitialize the driver after [cleanup]. *)
 
+(** Binding of the BSON library, {{:https://mongoc.org/libbson/current/index.html}libbson} *)
 module Bson : sig
+  (** BSON error encapsulation *)
   module Error : sig
     type t
 
     val domain : t -> int
+    (** [domain error] names the subsystem that generated the [error]. *)
+
     val code : t -> int
+    (** [code error] is a domain-specific [error] type. *)
+
     val message : t -> string
+    (** [message error] describes the [error]. *)
   end
 
   type t
