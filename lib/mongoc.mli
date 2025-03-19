@@ -78,7 +78,9 @@ module rec Cursor : sig
   val next : t -> Bson.t option
   val error : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
-  val collection_find : ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> Collection.t -> Bson.t -> t
+
+  val collection_find :
+    ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> Collection.t -> Bson.t -> t
 end
 
 and Collection : sig

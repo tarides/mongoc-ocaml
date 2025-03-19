@@ -59,7 +59,9 @@ module rec Cursor : sig
   val next : t -> Bson.t option
   val error : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
-  val collection_find : ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> Collection.t -> Bson.t -> t
+
+  val collection_find :
+    ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> Collection.t -> Bson.t -> t
 end = struct
   type t = Types_generated.Cursor.t structure ptr
 
@@ -74,7 +76,6 @@ end = struct
     else Ok ()
 
   let destroy (cursor : t) = C.Functions.Cursor.destroy cursor
-
   let collection_find = Collection.find
 end
 
