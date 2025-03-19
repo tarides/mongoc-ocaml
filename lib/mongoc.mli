@@ -1,3 +1,5 @@
+(** Binding of the MongoDB client library, libmongoc *)
+
 val init : unit -> unit
 (** Initialize the MongoDB C Driver by calling [init] exactly once at the
     beginning of your program. It is responsible for initializing global state

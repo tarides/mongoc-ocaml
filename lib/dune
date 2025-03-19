@@ -1,6 +1,6 @@
 (library
  (name mongoc)
- (public_name mongoc.mongoc)
+ (public_name mongoc)
  (ctypes
   (external_library_name libmongoc-1.0)
   (build_flags_resolver pkg_config)

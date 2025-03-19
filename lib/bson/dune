@@ -1,6 +1,6 @@
 (library
  (name bson)
- (public_name mongoc.mongoc.bson)
+ (package mongoc)
  (ctypes
   (external_library_name libbson-1.0)
   (build_flags_resolver pkg_config)
