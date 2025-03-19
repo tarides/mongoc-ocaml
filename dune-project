@@ -1,14 +1,14 @@
 (lang dune 3.16)
 (using ctypes 0.3)
-(name ocaml-mongoc)
+(name mongoc)
 (generate_opam_files true)
 (package
- (name ocaml-mongoc)
+ (name mongoc)
  (synopsis "OCaml binding of the libmongoc library")
  (description "OCaml binding of the MongoDB client library for C, libmongoc")
  (maintainers "Cuihtlauac ALVARADO")
  (authors "Cuihtlauac ALVARADO")
- (source (github tarides/ocaml-mongoc))
+ (source (github tarides/mongoc-ocaml))
  (license ISC)
  (depends
   (dune :build)

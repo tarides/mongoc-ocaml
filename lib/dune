@@ -1,11 +1,11 @@
 (library
- (name bson)
- (public_name ocaml-mongoc.mongoc.bson)
+ (name mongoc)
+ (public_name mongoc.mongoc)
  (ctypes
-  (external_library_name libbson-1.0)
+  (external_library_name libmongoc-1.0)
   (build_flags_resolver pkg_config)
   (headers
-   (include "bson/bson.h"))
+   (include "mongoc/mongoc.h"))
   (type_description
    (instance Types)
    (functor Type_description))
@@ -13,4 +13,5 @@
    (instance Functions)
    (functor Function_description))
   (generated_types Types_generated)
-  (generated_entry_point C)))
+  (generated_entry_point C))
+ (libraries bson))
