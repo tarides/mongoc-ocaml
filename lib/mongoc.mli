@@ -72,15 +72,16 @@ module Uri : sig
   val destroy : t -> unit
 end
 
-module Cursor : sig
+module rec Cursor : sig
   type t
 
   val next : t -> Bson.t option
   val error : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
+  val collection_find : ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> Collection.t -> Bson.t -> t
 end
 
-module rec Collection : sig
+and Collection : sig
   type t
 
   val find : ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> t -> Bson.t -> Cursor.t

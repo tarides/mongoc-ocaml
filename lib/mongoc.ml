@@ -53,7 +53,14 @@ let string_list_of_char_ptr_ptr (pp : char ptr ptr) : string list =
   in
   loop 0 []
 
-module Cursor = struct
+module rec Cursor : sig
+  type t = Types_generated.Cursor.t structure ptr
+
+  val next : t -> Bson.t option
+  val error : t -> (unit, Bson.Error.t) result
+  val destroy : t -> unit
+  val collection_find : ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> Collection.t -> Bson.t -> t
+end = struct
   type t = Types_generated.Cursor.t structure ptr
 
   let next (cursor : t) : Bson.t option =
@@ -67,9 +74,11 @@ module Cursor = struct
     else Ok ()
 
   let destroy (cursor : t) = C.Functions.Cursor.destroy cursor
+
+  let collection_find = Collection.find
 end
 
-module rec Collection : sig
+and Collection : sig
   type t = Types_generated.Collection.t structure ptr
 
   val find : ?opts:Bson.t -> ?read_prefs:Read_prefs.t -> t -> Bson.t -> Cursor.t
