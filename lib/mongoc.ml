@@ -7,6 +7,18 @@ module Bson = Bson
 let init = C.Functions.init
 let cleanup = C.Functions.cleanup
 
+let get_version () =
+  () |> C.Functions.get_version |> Ctypes_std_views.string_of_char_ptr
+
+let get_major_version () =
+  () |> C.Functions.get_major_version |> Signed.Int.to_int
+
+let get_minor_version () =
+  () |> C.Functions.get_minor_version |> Signed.Int.to_int
+
+let get_micro_version () =
+  () |> C.Functions.get_micro_version |> Signed.Int.to_int
+
 module Read_prefs = struct
   type t = Types_generated.Read_prefs.t structure ptr
 

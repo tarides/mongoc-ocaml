@@ -22,6 +22,18 @@ module Error = struct
     |> Ctypes.CArray.to_list |> List.to_seq |> String.of_seq
 end
 
+let get_version () =
+  () |> C.Functions.get_version |> Ctypes_std_views.string_of_char_ptr
+
+let get_major_version () =
+  () |> C.Functions.get_major_version |> Signed.Int.to_int
+
+let get_minor_version () =
+  () |> C.Functions.get_minor_version |> Signed.Int.to_int
+
+let get_micro_version () =
+  () |> C.Functions.get_micro_version |> Signed.Int.to_int
+
 let new_from_json ?len data : (t, Error.t) result =
   let len = PosixTypes.Ssize.(Option.fold ~none:minus_one ~some:of_int len) in
   let json = Ctypes_std_views.char_ptr_of_string data in

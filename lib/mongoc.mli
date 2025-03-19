@@ -11,6 +11,11 @@ val cleanup : unit -> unit
     MongoDB C Driver functions after [cleanup]. Note that [init] does not
     reinitialize the driver after [cleanup]. *)
 
+val get_version : unit -> string
+val get_major_version : unit -> int
+val get_minor_version : unit -> int
+val get_micro_version : unit -> int
+
 (** Binding of the BSON library, {{:https://mongoc.org/libbson/current/index.html}libbson} *)
 module Bson : sig
   (** BSON error encapsulation *)

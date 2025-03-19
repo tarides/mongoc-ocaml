@@ -2,6 +2,14 @@ module Functions (F : Ctypes.FOREIGN) = struct
   open Ctypes_static
   open F
 
+  let get_version = foreign "bson_get_version" (void @-> returning (ptr (const char)))
+
+  let get_major_version = foreign "bson_get_major_version" (void @-> returning int)
+
+  let get_minor_version = foreign "bson_get_minor_version" (void @-> returning int)
+
+  let get_micro_version = foreign "bson_get_micro_version" (void @-> returning int)
+
   let new_from_json =
     foreign "bson_new_from_json"
       (ptr (const uint8_t)
