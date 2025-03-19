@@ -22,6 +22,11 @@ module Error = struct
     |> Ctypes.CArray.to_list |> List.to_seq |> String.of_seq
 end
 
+module Const = struct
+  let some = Ctypes.allocate (const t)
+  let none = Ctypes.(from_voidp (const t) null)
+end
+
 let some = Ctypes.allocate t
 let none = Ctypes.(from_voidp t null)
 

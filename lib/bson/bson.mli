@@ -9,6 +9,11 @@ end
 
 type t = Types_generated.t Ctypes_static.structure
 
+module Const : sig
+  val some : t -> t Ctypes_static.ptr
+  val none : t Ctypes_static.ptr
+end
+
 val some : t -> t Ctypes_static.ptr
 val none : t Ctypes_static.ptr
 val t : t Ctypes_static.typ

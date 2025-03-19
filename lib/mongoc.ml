@@ -57,10 +57,7 @@ module Cursor = struct
   type t = Types_generated.Cursor.t structure ptr
 
   let next (cursor : t) : Bson.t option =
-    let doc =
-      Ctypes.allocate (ptr Bson.t)
-        (Ctypes.from_voidp (const Bson.t) Ctypes.null)
-    in
+    let doc = Ctypes.allocate (ptr (const Bson.t)) Bson.Const.none in
     if C.Functions.Cursor.next cursor doc then Some !@(!@doc) else None
 
   let error (cursor : t) =
@@ -110,23 +107,17 @@ end = struct
       Option.value read_prefs
         ~default:(Ctypes.from_voidp Read_prefs.t Ctypes.null)
     in
-    let reply = Ctypes.from_voidp Bson.t Ctypes.null in
     let error = Ctypes.make Bson.Error.t in
     let count =
       C.Functions.Collection.count_documents coll filter_ptr opts read_prefs
-        reply (Ctypes.addr error)
+        Bson.none (Ctypes.addr error)
     in
     if count = Int64.minus_one then Error error else Ok count
 
   let insert_one ?(opts : Bson.t option) (coll : t) (document : Bson.t) :
       (Bson.t, Bson.Error.t) result =
     let error = Ctypes.make Bson.Error.t in
-    let opts =
-      Option.fold
-        ~some:(Ctypes.allocate (const Bson.t))
-        ~none:(Ctypes.from_voidp (const Bson.t) Ctypes.null)
-        opts
-    in
+    let opts = Bson.Const.(Option.fold ~some ~none opts) in
     let reply = Ctypes.make Bson.t in
     if
       C.Functions.Collection.insert_one coll (Ctypes.addr document) opts
