@@ -50,7 +50,7 @@ let as_canonical_extended_json ?length (bson : t) =
   in
   let str = C.Functions.as_canonical_extended_json ptr length in
   Ctypes_std_views.string_of_char_ptr str
-  (* TODO: C.Functions.free (to_voidp str) *)
+(* TODO: C.Functions.free (to_voidp str) *)
 
 let as_relaxed_extended_json ?length (bson : t) =
   let ptr = Ctypes.allocate t bson in

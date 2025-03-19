@@ -1,4 +1,5 @@
-(** Binding of the {{:https://mongoc.org/}MongoDB C client library}, {{:https://mongoc.org/libmongoc/current/index.html}libmongoc} *)
+(** Binding of the {{:https://mongoc.org/}MongoDB C client library},
+    {{:https://mongoc.org/libmongoc/current/index.html}libmongoc} *)
 
 val init : unit -> unit
 (** Initialize the MongoDB C Driver by calling [init] exactly once at the
@@ -16,7 +17,8 @@ val get_major_version : unit -> int
 val get_minor_version : unit -> int
 val get_micro_version : unit -> int
 
-(** Binding of the BSON library, {{:https://mongoc.org/libbson/current/index.html}libbson} *)
+(** Binding of the BSON library,
+    {{:https://mongoc.org/libbson/current/index.html}libbson} *)
 module Bson : sig
   (** BSON error encapsulation *)
   module Error : sig

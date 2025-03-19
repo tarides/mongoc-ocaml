@@ -5,13 +5,17 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let init = foreign "mongoc_init" (void @-> returning void)
   let cleanup = foreign "mongoc_cleanup" (void @-> returning void)
 
-  let get_version = foreign "mongoc_get_version" (void @-> returning (ptr (const char)))
+  let get_version =
+    foreign "mongoc_get_version" (void @-> returning (ptr (const char)))
 
-  let get_major_version = foreign "mongoc_get_major_version" (void @-> returning int)
+  let get_major_version =
+    foreign "mongoc_get_major_version" (void @-> returning int)
 
-  let get_minor_version = foreign "mongoc_get_minor_version" (void @-> returning int)
+  let get_minor_version =
+    foreign "mongoc_get_minor_version" (void @-> returning int)
 
-  let get_micro_version = foreign "mongoc_get_micro_version" (void @-> returning int)
+  let get_micro_version =
+    foreign "mongoc_get_micro_version" (void @-> returning int)
 
   module Uri = struct
     let new_with_error =
