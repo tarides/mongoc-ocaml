@@ -23,6 +23,8 @@ module Bson : sig
   (** BSON error encapsulation *)
   module Error : sig
     type t
+    (** Type used as an out-parameter to pass error information to the caller.
+    *)
 
     val domain : t -> int
     (** [domain error] names the subsystem that generated the [error]. *)
@@ -37,9 +39,24 @@ module Bson : sig
   type t
 
   val new_from_json : ?len:int -> string -> (t, Error.t) result
+  (** [new_from_json data] function allocates and initializes a new [t] by
+      parsing the JSON found in data. Only a single JSON object may exist in
+      data or an error will be returned. *)
+
   val as_canonical_extended_json : ?length:int -> t -> string
+  (** [as_canonical_extended_json bson] encodes [bson] as a UTF-8 string in
+      Canonical Extended JSON. See
+      {{:https://github.com/mongodb/specifications/blob/master/source/extended-json/extended-json.md}MongoDB}
+      Extended JSON format for a description of Extended JSON formats. *)
+
   val as_relaxed_extended_json : ?length:int -> t -> string
+  (** [as_relaxed_extended_json bson] encodes [bson] as a UTF-8 string in
+      Relaxed Extended JSON. See
+      {{:https://github.com/mongodb/specifications/blob/master/source/extended-json/extended-json.md}MongoDB}
+      Extended JSON format for a description of Extended JSON formats. *)
+
   val as_json : ?length:int -> t -> string
+  (** Same as [as_relaxed_extended_json] *)
 end
 
 module Read_prefs : sig
