@@ -93,12 +93,8 @@ end = struct
 
   let find ?(opts : Bson.t option) ?(read_prefs : Read_prefs.t option)
       (coll : t) (filter : Bson.t) : Cursor.t =
-    let filter_ptr = Ctypes.allocate Bson.t filter in
-    let opts =
-      Option.fold ~some:(Ctypes.allocate Bson.t)
-        ~none:(Ctypes.from_voidp Bson.t Ctypes.null)
-        opts
-    in
+    let filter_ptr = Bson.some filter in
+    let opts = Bson.(Option.fold ~some ~none opts) in
     let read_prefs =
       Option.value read_prefs
         ~default:(Ctypes.from_voidp Read_prefs.t Ctypes.null)
@@ -108,12 +104,8 @@ end = struct
   let count_documents ?(opts : Bson.t option)
       ?(read_prefs : Read_prefs.t option) (coll : t) (filter : Bson.t) :
       (Int64.t, Bson.Error.t) result =
-    let filter_ptr = Ctypes.allocate Bson.t filter in
-    let opts =
-      Option.fold ~some:(Ctypes.allocate Bson.t)
-        ~none:(Ctypes.from_voidp Bson.t Ctypes.null)
-        opts
-    in
+    let filter_ptr = Bson.some filter in
+    let opts = Bson.(Option.fold ~some ~none opts) in
     let read_prefs =
       Option.value read_prefs
         ~default:(Ctypes.from_voidp Read_prefs.t Ctypes.null)
@@ -167,11 +159,7 @@ end = struct
   let get_collection_names ?(opts : Bson.t option) (db : t) :
       (string list, Bson.Error.t) result =
     let error = Ctypes.make Bson.Error.t in
-    let opts =
-      Option.fold ~some:(Ctypes.allocate Bson.t)
-        ~none:(Ctypes.from_voidp Bson.t Ctypes.null)
-        opts
-    in
+    let opts = Bson.(Option.fold ~some ~none opts) in
     let f =
       C.Functions.Database.get_collection_names_with_opts db opts
         (Ctypes.addr error)
@@ -226,11 +214,7 @@ end = struct
   let get_database_names ?(opts : Bson.t option) (client : t) :
       (string list, Bson.Error.t) result =
     let error = Ctypes.make Bson.Error.t in
-    let opts =
-      Option.fold ~some:(Ctypes.allocate Bson.t)
-        ~none:(Ctypes.from_voidp Bson.t Ctypes.null)
-        opts
-    in
+    let opts = Bson.(Option.fold ~some ~none opts) in
     let f =
       C.Functions.Client.get_database_names_with_opts client opts
         (Ctypes.addr error)

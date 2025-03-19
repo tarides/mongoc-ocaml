@@ -9,6 +9,8 @@ end
 
 type t = Types_generated.t Ctypes_static.structure
 
+val some : t -> t Ctypes_static.ptr
+val none : t Ctypes_static.ptr
 val t : t Ctypes_static.typ
 val get_version : unit -> string
 val get_major_version : unit -> int
