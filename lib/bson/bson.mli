@@ -11,5 +11,6 @@ type t = Types_generated.t Ctypes_static.structure
 
 val t : t Ctypes_static.typ
 val new_from_json : ?len:int -> string -> (t, Error.t) result
+val as_canonical_extended_json : ?length:int -> t -> string
 val as_relaxed_extended_json : ?length:int -> t -> string
 val as_json : ?length:int -> t -> string

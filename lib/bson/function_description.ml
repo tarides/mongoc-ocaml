@@ -9,12 +9,12 @@ module Functions (F : Ctypes.FOREIGN) = struct
       @-> ptr Types_generated.Error.t
       @-> returning (ptr Types_generated.t))
 
-  let as_relaxed_extended_json =
-    foreign "bson_as_relaxed_extended_json"
-      (ptr (const Types_generated.t) @-> ptr size_t @-> returning (ptr char))
-
   let as_canonical_extended_json =
     foreign "bson_as_canonical_extended_json"
+      (ptr (const Types_generated.t) @-> ptr size_t @-> returning (ptr char))
+
+  let as_relaxed_extended_json =
+    foreign "bson_as_relaxed_extended_json"
       (ptr (const Types_generated.t) @-> ptr size_t @-> returning (ptr char))
 
   let free = foreign "bson_free" (ptr void @-> returning void)
