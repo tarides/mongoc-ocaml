@@ -30,12 +30,14 @@ let new_from_json ?len data : (t, Error.t) result =
   let bson = C.Functions.new_from_json json len (Ctypes.addr error) in
   if Ctypes.is_null bson then Result.Error error else Result.Ok !@bson
 
-let as_json ?length (bson : t) =
+let as_relaxed_extended_json ?length (bson : t) =
   let ptr = Ctypes.allocate t bson in
   let length =
     let some u = u |> Unsigned.Size_t.of_int |> Ctypes.allocate size_t in
     Option.fold ~none:(Ctypes.from_voidp size_t Ctypes.null) ~some length
   in
-  let str = C.Functions.as_json ptr length in
+  let str = C.Functions.as_relaxed_extended_json ptr length in
   Ctypes_std_views.string_of_char_ptr str
 (* TODO: C.Functions.free (to_voidp str) *)
+
+let as_json = as_relaxed_extended_json

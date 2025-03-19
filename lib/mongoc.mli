@@ -30,6 +30,7 @@ module Bson : sig
   type t
 
   val new_from_json : ?len:int -> string -> (t, Error.t) result
+  val as_relaxed_extended_json : ?length:int -> t -> string
   val as_json : ?length:int -> t -> string
 end
 
