@@ -16,12 +16,13 @@
   (github tarides/mongoc-ocaml))
  (license ISC)
  (depends
-  (dune :build)
-  (ocamlformat :build)
-  cmdliner
-  ctypes
-  conf-libmongoc))
-
-(package
- (name conf-libmongoc)
- (allow_empty))
+  (ocaml
+   (>= 4.14.0))
+  (ocamlformat :with-dev-setup)
+  (cmdliner
+   (and
+    (>= 1.3.0)
+    :with-test))
+  (ctypes
+   (>= 0.23.0))
+  (conf-pkg-config :build)))

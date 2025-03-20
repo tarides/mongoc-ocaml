@@ -43,4 +43,4 @@ jobs:
           mongodb-version: "8.0"
 
       - name: Runtest
-        run: opam exec -- dune runtest
+        run: opam exec -- dune build @test-mongo
