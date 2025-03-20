@@ -32,6 +32,8 @@ end
 let some = Ctypes.allocate t
 let none = Ctypes.(from_voidp t null)
 
+let ptr_of_opt = Option.value ~default:none
+
 let get_version () =
   () |> C.Functions.get_version |> Ctypes_std_views.string_of_char_ptr
 
@@ -73,5 +75,4 @@ let as_relaxed_extended_json ?length (bson : t) =
 (* TODO: C.Functions.free (to_voidp str) *)
 
 let as_json = as_relaxed_extended_json
-
-let destroy (bson : t_struct ptr) = C.Functions.destroy bson |> ignore
+let destroy (bson : t) = C.Functions.destroy bson |> ignore

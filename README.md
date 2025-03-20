@@ -10,3 +10,5 @@ C functions name prefixes are turned into modules. C functions name with suffix 
 * `mongoc_database_get_collection_names_with_opts` is exposed as `Mongoc.Database.get_collection_names`
 
 The library `libbson` is exposed as a submodule `Mongoc.Bson`.
+
+Online documentation: https://tarides.github.io/mongoc-ocaml/mongoc/

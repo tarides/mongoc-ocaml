@@ -100,14 +100,14 @@ end = struct
   let find ?(opts : Bson.t option) ?(read_prefs : Read_prefs.t option)
       (coll : t) (filter : Bson.t) : Cursor.t =
     let opts = Option.value ~default:Bson.none opts in
-    let read_prefs = Option.value read_prefs ~default:Read_prefs.none in
+    let read_prefs = Option.value ~default:Read_prefs.none read_prefs in
     C.Functions.Collection.find_with_opts coll filter opts read_prefs
 
   let count_documents ?(opts : Bson.t option)
       ?(read_prefs : Read_prefs.t option) (coll : t) (filter : Bson.t) :
       (Int64.t, Bson.Error.t) result =
     let opts = Option.value ~default:Bson.none opts in
-    let read_prefs = Option.value read_prefs ~default:Read_prefs.none in
+    let read_prefs = Option.value ~default:Read_prefs.none read_prefs in
     let error = Ctypes.(make Bson.Error.t |> addr) in
     let count =
       C.Functions.Collection.count_documents coll filter opts read_prefs
@@ -119,11 +119,9 @@ end = struct
       (Bson.t, Bson.Error.t) result =
     let error = Ctypes.(make Bson.Error.t |> addr) in
     let opts = Option.value ~default:Bson.none opts in
-    let reply = Ctypes.make Bson.t in
-    if
-      C.Functions.Collection.insert_one coll document opts (Ctypes.addr reply)
-        error
-    then Ok (Ctypes.addr reply)
+    let reply = Ctypes.(make Bson.t |> addr) in
+    if C.Functions.Collection.insert_one coll document opts reply error then
+      Ok reply
     else Error error
 
   let drop (coll : t) =

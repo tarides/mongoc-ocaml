@@ -18,6 +18,7 @@ end
 
 val some : t_struct -> t
 val none : t
+val ptr_of_opt : t opt 
 val t : t_struct Ctypes_static.typ
 val get_version : unit -> string
 val get_major_version : unit -> int
