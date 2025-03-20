@@ -3,7 +3,6 @@
 
   $ ./omong.exe list
   admin.system.version
-  bitcoin.price_2017_2023
   config.system.sessions
   local.startup_log
 
@@ -124,7 +123,6 @@
 
   $ mongosh list.js
   admin.system.version
-  bitcoin.price_2017_2023
   config.system.sessions
   local.startup_log
 
