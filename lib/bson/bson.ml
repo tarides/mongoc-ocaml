@@ -10,6 +10,7 @@ let t : t_struct typ = Types_generated.t
 module Error = struct
   type t_struct = Types_generated.Error.t Ctypes_static.structure
   type t = t_struct Ctypes_static.ptr
+
   let t : t_struct typ = Types_generated.Error.t
 
   let domain (error : t) =
@@ -49,14 +50,14 @@ let new_from_json ?length data : (t, Error.t) result =
   in
   let json = Ctypes_std_views.char_ptr_of_string data in
   let json = Ctypes.coerce (ptr char) (ptr (const uint8_t)) json in
-  let error = Ctypes.make Types_generated.Error.t in
-  let bson = C.Functions.new_from_json json length (Ctypes.addr error) in
-  if Ctypes.is_null bson then Result.Error (Ctypes.addr error) else Result.Ok bson
+  let error = Ctypes.(make Types_generated.Error.t |> addr) in
+  let bson = C.Functions.new_from_json json length error in
+  if Ctypes.is_null bson then Error error else Ok bson
 
 let as_canonical_extended_json ?length (bson : t) =
   let length =
     let some u = u |> Unsigned.Size_t.of_int |> Ctypes.allocate size_t in
-    Option.fold ~none:(Ctypes.from_voidp size_t Ctypes.null) ~some length
+    Option.fold ~none:Ctypes.(from_voidp size_t null) ~some length
   in
   let str = C.Functions.as_canonical_extended_json bson length in
   Ctypes_std_views.string_of_char_ptr str
@@ -65,11 +66,12 @@ let as_canonical_extended_json ?length (bson : t) =
 let as_relaxed_extended_json ?length (bson : t) =
   let length =
     let some u = u |> Unsigned.Size_t.of_int |> Ctypes.allocate size_t in
-    Option.fold ~none:(Ctypes.from_voidp size_t Ctypes.null) ~some length
+    Option.fold ~none:Ctypes.(from_voidp size_t null) ~some length
   in
   let str = C.Functions.as_relaxed_extended_json bson length in
   Ctypes_std_views.string_of_char_ptr str
 (* TODO: C.Functions.free (to_voidp str) *)
 
 let as_json = as_relaxed_extended_json
+
 let destroy (bson : t_struct ptr) = C.Functions.destroy bson |> ignore

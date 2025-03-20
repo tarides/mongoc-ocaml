@@ -30,10 +30,10 @@ module Uri = struct
   type t = Types_generated.Uri.t structure ptr
 
   let new_with_error uri : (t, Bson.Error.t) result =
-    let error = Ctypes.make Bson.Error.t in
+    let error = Ctypes.(make Bson.Error.t |> addr) in
     let uri = Ctypes_std_views.char_ptr_of_string uri in
-    let uri = C.Functions.Uri.new_with_error uri (Ctypes.addr error) in
-    if Ctypes.is_null uri then Error (Ctypes.addr error) else Ok uri
+    let uri = C.Functions.Uri.new_with_error uri error in
+    if Ctypes.is_null uri then Error error else Ok uri
 
   let get_database t =
     let db = C.Functions.Uri.get_database t in
@@ -71,10 +71,8 @@ end = struct
     if C.Functions.Cursor.next cursor doc then Some !@doc else None
 
   let error (cursor : t) =
-    let error = Ctypes.make Bson.Error.t in
-    if C.Functions.Cursor.error cursor (Ctypes.addr error) then
-      Result.Error (Ctypes.addr error)
-    else Ok ()
+    let error = Ctypes.(make Bson.Error.t |> addr) in
+    if C.Functions.Cursor.error cursor error then Error error else Ok ()
 
   let destroy (cursor : t) = C.Functions.Cursor.destroy cursor
   let collection_find = Collection.find
@@ -110,28 +108,27 @@ end = struct
       (Int64.t, Bson.Error.t) result =
     let opts = Option.value ~default:Bson.none opts in
     let read_prefs = Option.value read_prefs ~default:Read_prefs.none in
-    let error = Ctypes.make Bson.Error.t in
+    let error = Ctypes.(make Bson.Error.t |> addr) in
     let count =
       C.Functions.Collection.count_documents coll filter opts read_prefs
-        Bson.none (Ctypes.addr error)
+        Bson.none error
     in
-    if count = Int64.minus_one then Error (Ctypes.addr error) else Ok count
+    if count = Int64.minus_one then Error error else Ok count
 
   let insert_one ?(opts : Bson.t option) (coll : t) (document : Bson.t) :
       (Bson.t, Bson.Error.t) result =
-    let error = Ctypes.make Bson.Error.t in
+    let error = Ctypes.(make Bson.Error.t |> addr) in
     let opts = Option.value ~default:Bson.none opts in
     let reply = Ctypes.make Bson.t in
     if
       C.Functions.Collection.insert_one coll document opts (Ctypes.addr reply)
-        (Ctypes.addr error)
+        error
     then Ok (Ctypes.addr reply)
-    else Error (Ctypes.addr error)
+    else Error error
 
   let drop (coll : t) =
-    let error = Ctypes.make Bson.Error.t in
-    if C.Functions.Collection.drop coll (Ctypes.addr error) then Ok ()
-    else Result.Error (Ctypes.addr error)
+    let error = Ctypes.(make Bson.Error.t |> addr) in
+    if C.Functions.Collection.drop coll error then Ok () else Error error
 
   let destroy (coll : t) = C.Functions.Collection.destroy coll
   let from_database (db : Database.t) name = Database.get_collection db name
@@ -152,22 +149,18 @@ end = struct
 
   let get_collection_names ?(opts : Bson.t option) (db : t) :
       (string list, Bson.Error.t) result =
-    let error = Ctypes.make Bson.Error.t in
+    let error = Ctypes.(make Bson.Error.t |> addr) in
     let opts = Option.value ~default:Bson.none opts in
-    let f =
-      C.Functions.Database.get_collection_names_with_opts db opts
-        (Ctypes.addr error)
-    in
-    if Ctypes.is_null f then Error (Ctypes.addr error) else Ok (string_list_of_char_ptr_ptr f)
+    let f = C.Functions.Database.get_collection_names_with_opts db opts error in
+    if Ctypes.is_null f then Error error else Ok (string_list_of_char_ptr_ptr f)
 
   let get_collection (db : t) (name : string) : Collection.t =
     let name = Ctypes_std_views.char_ptr_of_string name in
     C.Functions.Database.get_collection db name
 
   let drop (db : t) =
-    let error = Ctypes.make Bson.Error.t in
-    if C.Functions.Database.drop db (Ctypes.addr error) then Ok ()
-    else Result.Error (Ctypes.addr error)
+    let error = Ctypes.(make Bson.Error.t |> addr) in
+    if C.Functions.Database.drop db error then Ok () else Error error
 
   let destroy (db : t) = C.Functions.Database.destroy db
   let from_client (client : Client.t) name = Client.get_database client name
@@ -199,21 +192,16 @@ end = struct
     if Ctypes.is_null client then None else Some client
 
   let new_from_uri_with_error (uri : Uri.t) : (t, Bson.Error.t) result =
-    let error = Ctypes.make Bson.Error.t in
-    let client =
-      C.Functions.Client.new_from_uri_with_error uri (Ctypes.addr error)
-    in
-    if Ctypes.is_null client then Error (Ctypes.addr error) else Ok client
+    let error = Ctypes.(make Bson.Error.t |> addr) in
+    let client = C.Functions.Client.new_from_uri_with_error uri error in
+    if Ctypes.is_null client then Error error else Ok client
 
   let get_database_names ?(opts : Bson.t option) (client : t) :
       (string list, Bson.Error.t) result =
-    let error = Ctypes.make Bson.Error.t in
+    let error = Ctypes.(make Bson.Error.t |> addr) in
     let opts = Option.value ~default:Bson.none opts in
-    let f =
-      C.Functions.Client.get_database_names_with_opts client opts
-        (Ctypes.addr error)
-    in
-    if Ctypes.is_null f then Error (Ctypes.addr error) else Ok (string_list_of_char_ptr_ptr f)
+    let f = C.Functions.Client.get_database_names_with_opts client opts error in
+    if Ctypes.is_null f then Error error else Ok (string_list_of_char_ptr_ptr f)
 
   let get_database (client : t) db_name =
     let db_name = Ctypes_std_views.char_ptr_of_string db_name in
