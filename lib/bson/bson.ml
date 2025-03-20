@@ -1,23 +1,25 @@
 open Ctypes_static
 
+let ( !@ ) = Ctypes.( !@ )
+
 type t_struct = Types_generated.t structure
 type t = t_struct ptr
 
 let t : t_struct typ = Types_generated.t
 
 module Error = struct
-  type t = Types_generated.Error.t structure
-
-  let t : t typ = Types_generated.Error.t
+  type t_struct = Types_generated.Error.t Ctypes_static.structure
+  type t = t_struct Ctypes_static.ptr
+  let t : t_struct typ = Types_generated.Error.t
 
   let domain (error : t) =
-    Ctypes.getf error Types_generated.Error.domain |> Unsigned.UInt32.to_int
+    Ctypes.getf !@error Types_generated.Error.domain |> Unsigned.UInt32.to_int
 
   let code (error : t) =
-    Ctypes.getf error Types_generated.Error.code |> Unsigned.UInt32.to_int
+    Ctypes.getf !@error Types_generated.Error.code |> Unsigned.UInt32.to_int
 
   let message (error : t) =
-    Ctypes.getf error Types_generated.Error.message
+    Ctypes.getf !@error Types_generated.Error.message
     |> Ctypes.CArray.to_list |> List.to_seq |> String.of_seq
 end
 
@@ -49,7 +51,7 @@ let new_from_json ?length data : (t, Error.t) result =
   let json = Ctypes.coerce (ptr char) (ptr (const uint8_t)) json in
   let error = Ctypes.make Types_generated.Error.t in
   let bson = C.Functions.new_from_json json length (Ctypes.addr error) in
-  if Ctypes.is_null bson then Result.Error error else Result.Ok bson
+  if Ctypes.is_null bson then Result.Error (Ctypes.addr error) else Result.Ok bson
 
 let as_canonical_extended_json ?length (bson : t) =
   let length =

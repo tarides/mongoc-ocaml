@@ -33,7 +33,7 @@ module Uri = struct
     let error = Ctypes.make Bson.Error.t in
     let uri = Ctypes_std_views.char_ptr_of_string uri in
     let uri = C.Functions.Uri.new_with_error uri (Ctypes.addr error) in
-    if Ctypes.is_null uri then Error error else Ok uri
+    if Ctypes.is_null uri then Error (Ctypes.addr error) else Ok uri
 
   let get_database t =
     let db = C.Functions.Uri.get_database t in
@@ -73,7 +73,7 @@ end = struct
   let error (cursor : t) =
     let error = Ctypes.make Bson.Error.t in
     if C.Functions.Cursor.error cursor (Ctypes.addr error) then
-      Result.Error error
+      Result.Error (Ctypes.addr error)
     else Ok ()
 
   let destroy (cursor : t) = C.Functions.Cursor.destroy cursor
@@ -115,7 +115,7 @@ end = struct
       C.Functions.Collection.count_documents coll filter opts read_prefs
         Bson.none (Ctypes.addr error)
     in
-    if count = Int64.minus_one then Error error else Ok count
+    if count = Int64.minus_one then Error (Ctypes.addr error) else Ok count
 
   let insert_one ?(opts : Bson.t option) (coll : t) (document : Bson.t) :
       (Bson.t, Bson.Error.t) result =
@@ -126,12 +126,12 @@ end = struct
       C.Functions.Collection.insert_one coll document opts (Ctypes.addr reply)
         (Ctypes.addr error)
     then Ok (Ctypes.addr reply)
-    else Error error
+    else Error (Ctypes.addr error)
 
   let drop (coll : t) =
     let error = Ctypes.make Bson.Error.t in
     if C.Functions.Collection.drop coll (Ctypes.addr error) then Ok ()
-    else Result.Error error
+    else Result.Error (Ctypes.addr error)
 
   let destroy (coll : t) = C.Functions.Collection.destroy coll
   let from_database (db : Database.t) name = Database.get_collection db name
@@ -158,7 +158,7 @@ end = struct
       C.Functions.Database.get_collection_names_with_opts db opts
         (Ctypes.addr error)
     in
-    if Ctypes.is_null f then Error error else Ok (string_list_of_char_ptr_ptr f)
+    if Ctypes.is_null f then Error (Ctypes.addr error) else Ok (string_list_of_char_ptr_ptr f)
 
   let get_collection (db : t) (name : string) : Collection.t =
     let name = Ctypes_std_views.char_ptr_of_string name in
@@ -167,7 +167,7 @@ end = struct
   let drop (db : t) =
     let error = Ctypes.make Bson.Error.t in
     if C.Functions.Database.drop db (Ctypes.addr error) then Ok ()
-    else Result.Error error
+    else Result.Error (Ctypes.addr error)
 
   let destroy (db : t) = C.Functions.Database.destroy db
   let from_client (client : Client.t) name = Client.get_database client name
@@ -203,7 +203,7 @@ end = struct
     let client =
       C.Functions.Client.new_from_uri_with_error uri (Ctypes.addr error)
     in
-    if Ctypes.is_null client then Error error else Ok client
+    if Ctypes.is_null client then Error (Ctypes.addr error) else Ok client
 
   let get_database_names ?(opts : Bson.t option) (client : t) :
       (string list, Bson.Error.t) result =
@@ -213,7 +213,7 @@ end = struct
       C.Functions.Client.get_database_names_with_opts client opts
         (Ctypes.addr error)
     in
-    if Ctypes.is_null f then Error error else Ok (string_list_of_char_ptr_ptr f)
+    if Ctypes.is_null f then Error (Ctypes.addr error) else Ok (string_list_of_char_ptr_ptr f)
 
   let get_database (client : t) db_name =
     let db_name = Ctypes_std_views.char_ptr_of_string db_name in
@@ -225,5 +225,5 @@ end = struct
     let coll_name = char_ptr_of_string coll_name in
     C.Functions.Client.get_collection client db_name coll_name
 
-  let destroy (client : t) = C.Functions.Client.destroy client
+  let destroy = C.Functions.Client.destroy
 end

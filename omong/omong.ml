@@ -96,9 +96,9 @@ let import uri db_name coll_name csv =
   |> Seq.map (String.split_on_char ',')
   |> Seq.map (json_object keys)
   |> Seq.iter (fun json ->
-         let|| bson = Mongoc.Bson.(new_from_json ?length:None, ignore, json) in
+         let|| bson = Mongoc.Bson.(new_from_json ?length:None, destroy, json) in
          let|| _ = Mongoc.Collection.(insert_one coll, ignore, bson) in
          ());
-  let|| filter = Mongoc.Bson.(new_from_json ?length:None, ignore, "{}") in
+  let|| filter = Mongoc.Bson.(new_from_json ?length:None, destroy, "{}") in
   let|| count = Mongoc.Collection.(count_documents coll, ignore, filter) in
   Printf.printf "Collection %s has %Li documents" coll_name count

@@ -1,7 +1,8 @@
 module Error : sig
-  type t = Types_generated.Error.t Ctypes_static.structure
+  type t_struct = Types_generated.Error.t Ctypes_static.structure
+  type t = t_struct Ctypes_static.ptr
 
-  val t : t Ctypes_static.typ
+  val t : t_struct Ctypes_static.typ
   val domain : t -> int
   val code : t -> int
   val message : t -> string
