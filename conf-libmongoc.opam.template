@@ -1,0 +1,17 @@
+opam-version: "2.0"
+maintainer: "Tarides <contact@tarides.com>"
+bug-reports: "https://github.com/ocaml/opam-repository/issues"
+authors: ["MongoDB"]
+homepage: "https://www.mongodb.com/docs/drivers/c/"
+license: "Apache-2.0"
+build: ["pkg-config" "libmongoc"]
+depends: ["conf-pkg-config" {build}]
+depexts: [
+  ["libmongoc-dev"] {os-family = "debian" | os-family = "ubuntu"}
+  ["mongo-c-driver-devel"] {os-distribution = "fedora"}
+  ["mongo-c-driver"] {os-distribution = "arch" | os = "freebsd" | os = "macos"}
+  ["mongo-c-driver-dev"] {os-distribution = "alpine"}
+]
+synopsis: "Virtual package relying on a libmongoc system installation"
+description: "This package can only install if libmongoc is installed on the system."
+flags: conf

@@ -12,6 +12,7 @@ depends: [
   "ocamlformat" {build}
   "cmdliner"
   "ctypes"
+  "conf-libmongoc"
   "odoc" {with-doc}
 ]
 build: [
