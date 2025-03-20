@@ -51,7 +51,7 @@ let find uri db_name coll_name json =
   let|| db = wrap Mongoc.Database.(from_client client, destroy, db_name) in
   let|| coll = wrap Mongoc.Collection.(from_database db, destroy, coll_name) in
   Printf.printf "BSON query: %s\n" json;
-  let|| query = Mongoc.Bson.(new_from_json ?length:None, ignore, json) in
+  let|| query = Mongoc.Bson.(new_from_json ?length:None, destroy, json) in
   let|| cursor = wrap Mongoc.Cursor.(collection_find coll, destroy, query) in
   Seq.unfold cursor_step cursor
   |> Seq.map Mongoc.Bson.as_json

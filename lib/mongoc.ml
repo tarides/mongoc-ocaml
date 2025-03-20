@@ -23,6 +23,7 @@ module Read_prefs = struct
   type t = Types_generated.Read_prefs.t structure ptr
 
   let t = Types_generated.Read_prefs.t
+  let none = Ctypes.(from_voidp t null)
 end
 
 module Uri = struct
@@ -67,7 +68,7 @@ end = struct
 
   let next (cursor : t) : Bson.t option =
     let doc = Ctypes.allocate (ptr (const Bson.t)) Bson.Const.none in
-    if C.Functions.Cursor.next cursor doc then Some !@(!@doc) else None
+    if C.Functions.Cursor.next cursor doc then Some !@doc else None
 
   let error (cursor : t) =
     let error = Ctypes.make Bson.Error.t in
@@ -100,26 +101,18 @@ end = struct
 
   let find ?(opts : Bson.t option) ?(read_prefs : Read_prefs.t option)
       (coll : t) (filter : Bson.t) : Cursor.t =
-    let filter_ptr = Bson.some filter in
-    let opts = Bson.(Option.fold ~some ~none opts) in
-    let read_prefs =
-      Option.value read_prefs
-        ~default:(Ctypes.from_voidp Read_prefs.t Ctypes.null)
-    in
-    C.Functions.Collection.find_with_opts coll filter_ptr opts read_prefs
+    let opts = Option.value ~default:Bson.none opts in
+    let read_prefs = Option.value read_prefs ~default:Read_prefs.none in
+    C.Functions.Collection.find_with_opts coll filter opts read_prefs
 
   let count_documents ?(opts : Bson.t option)
       ?(read_prefs : Read_prefs.t option) (coll : t) (filter : Bson.t) :
       (Int64.t, Bson.Error.t) result =
-    let filter_ptr = Bson.some filter in
-    let opts = Bson.(Option.fold ~some ~none opts) in
-    let read_prefs =
-      Option.value read_prefs
-        ~default:(Ctypes.from_voidp Read_prefs.t Ctypes.null)
-    in
+    let opts = Option.value ~default:Bson.none opts in
+    let read_prefs = Option.value read_prefs ~default:Read_prefs.none in
     let error = Ctypes.make Bson.Error.t in
     let count =
-      C.Functions.Collection.count_documents coll filter_ptr opts read_prefs
+      C.Functions.Collection.count_documents coll filter opts read_prefs
         Bson.none (Ctypes.addr error)
     in
     if count = Int64.minus_one then Error error else Ok count
@@ -127,12 +120,12 @@ end = struct
   let insert_one ?(opts : Bson.t option) (coll : t) (document : Bson.t) :
       (Bson.t, Bson.Error.t) result =
     let error = Ctypes.make Bson.Error.t in
-    let opts = Bson.Const.(Option.fold ~some ~none opts) in
+    let opts = Option.value ~default:Bson.none opts in
     let reply = Ctypes.make Bson.t in
     if
-      C.Functions.Collection.insert_one coll (Ctypes.addr document) opts
-        (Ctypes.addr reply) (Ctypes.addr error)
-    then Ok reply
+      C.Functions.Collection.insert_one coll document opts (Ctypes.addr reply)
+        (Ctypes.addr error)
+    then Ok (Ctypes.addr reply)
     else Error error
 
   let drop (coll : t) =
@@ -160,7 +153,7 @@ end = struct
   let get_collection_names ?(opts : Bson.t option) (db : t) :
       (string list, Bson.Error.t) result =
     let error = Ctypes.make Bson.Error.t in
-    let opts = Bson.(Option.fold ~some ~none opts) in
+    let opts = Option.value ~default:Bson.none opts in
     let f =
       C.Functions.Database.get_collection_names_with_opts db opts
         (Ctypes.addr error)
@@ -215,7 +208,7 @@ end = struct
   let get_database_names ?(opts : Bson.t option) (client : t) :
       (string list, Bson.Error.t) result =
     let error = Ctypes.make Bson.Error.t in
-    let opts = Bson.(Option.fold ~some ~none opts) in
+    let opts = Option.value ~default:Bson.none opts in
     let f =
       C.Functions.Client.get_database_names_with_opts client opts
         (Ctypes.addr error)

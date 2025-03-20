@@ -30,4 +30,5 @@ module Functions (F : Ctypes.FOREIGN) = struct
       (ptr (const Types_generated.t) @-> ptr size_t @-> returning (ptr char))
 
   let free = foreign "bson_free" (ptr void @-> returning void)
+  let destroy = foreign "bson_destroy" (ptr Types_generated.t @-> returning void)
 end

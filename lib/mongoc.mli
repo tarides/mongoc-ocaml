@@ -58,6 +58,9 @@ module Bson : sig
 
   val as_json : ?length:int -> t -> string
   (** Same as [as_relaxed_extended_json] *)
+
+  val destroy : t -> unit
+  (** The [destroy] function shall free an allocated [t] document. *)
 end
 
 module Read_prefs : sig

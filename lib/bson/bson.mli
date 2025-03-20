@@ -7,16 +7,17 @@ module Error : sig
   val message : t -> string
 end
 
-type t = Types_generated.t Ctypes_static.structure
+type t_struct = Types_generated.t Ctypes_static.structure
+type t = t_struct Ctypes_static.ptr
 
 module Const : sig
-  val some : t -> t Ctypes_static.ptr
-  val none : t Ctypes_static.ptr
+  val some : t_struct -> t
+  val none : t
 end
 
-val some : t -> t Ctypes_static.ptr
-val none : t Ctypes_static.ptr
-val t : t Ctypes_static.typ
+val some : t_struct -> t
+val none : t
+val t : t_struct Ctypes_static.typ
 val get_version : unit -> string
 val get_major_version : unit -> int
 val get_minor_version : unit -> int
@@ -25,3 +26,4 @@ val new_from_json : ?length:int -> string -> (t, Error.t) result
 val as_canonical_extended_json : ?length:int -> t -> string
 val as_relaxed_extended_json : ?length:int -> t -> string
 val as_json : ?length:int -> t -> string
+val destroy : t -> unit
