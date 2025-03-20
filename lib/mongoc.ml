@@ -91,6 +91,10 @@ and Collection : sig
     (Int64.t, Bson.Error.t) result
 
   val insert_one : ?opts:Bson.t -> t -> Bson.t -> (Bson.t, Bson.Error.t) result
+
+  val insert_many :
+    ?opts:Bson.t -> t -> Bson.t list -> (Bson.t, Bson.Error.t) result
+
   val drop : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
   val from_database : Database.t -> string -> t
@@ -122,6 +126,17 @@ end = struct
     let reply = Ctypes.(make Bson.t |> addr) in
     if C.Functions.Collection.insert_one coll document opts reply error then
       Ok reply
+    else Error error
+
+  let insert_many ?(opts : Bson.t option) (coll : t) (documents : Bson.t list) :
+      (Bson.t, Bson.Error.t) result =
+    let error = Ctypes.(make Bson.Error.t |> addr) in
+    let opts = Option.value ~default:Bson.none opts in
+    let reply = Ctypes.(make Bson.t |> addr) in
+    let length = documents |> List.length |> Unsigned.Size_t.of_int in
+    let documents = Ctypes.CArray.(of_list (ptr Bson.t) documents |> start) in
+    if C.Functions.Collection.insert_many coll documents length opts reply error
+    then Ok reply
     else Error error
 
   let drop (coll : t) =

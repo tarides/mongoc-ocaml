@@ -99,6 +99,10 @@ and Collection : sig
     (Int64.t, Bson.Error.t) result
 
   val insert_one : ?opts:Bson.t -> t -> Bson.t -> (Bson.t, Bson.Error.t) result
+
+  val insert_many :
+    ?opts:Bson.t -> t -> Bson.t list -> (Bson.t, Bson.Error.t) result
+
   val drop : t -> (unit, Bson.Error.t) result
   val destroy : t -> unit
   val from_database : Database.t -> string -> t

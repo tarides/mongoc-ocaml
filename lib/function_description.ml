@@ -120,6 +120,14 @@ module Functions (F : Ctypes.FOREIGN) = struct
         @-> ptr (const Bson.t)
         @-> ptr Bson.t @-> ptr Bson.Error.t @-> returning bool)
 
+    let insert_many =
+      foreign "mongoc_collection_insert_many"
+        (ptr Types_generated.Collection.t
+        @-> ptr (ptr (const Bson.t))
+        @-> size_t
+        @-> ptr (const Bson.t)
+        @-> ptr Bson.t @-> ptr Bson.Error.t @-> returning bool)
+
     let drop =
       foreign "mongoc_collection_drop"
         (ptr Types_generated.Collection.t

@@ -32,8 +32,6 @@ end
 let some = Ctypes.allocate t
 let none = Ctypes.(from_voidp t null)
 
-let ptr_of_opt = Option.value ~default:none
-
 let get_version () =
   () |> C.Functions.get_version |> Ctypes_std_views.string_of_char_ptr
 
