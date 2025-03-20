@@ -1,0 +1,35 @@
+name: build
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os:
+          # - ubuntu-latest (already in test)
+          - macos-latest
+          # - windows-latest (libmongoc not available through cygwin)
+        ocaml-compiler:
+          - 5.3.0
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup OCaml ${{ matrix.ocaml-version }}
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+
+      - name: Opam dependencies
+        run: opam install --deps-only -t .
+
+      - name: Runtest
+        run: opam exec -- dune build @all
