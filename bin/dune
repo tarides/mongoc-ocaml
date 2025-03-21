@@ -3,4 +3,6 @@
  (libraries omong cmdliner))
 
 (cram
+ (alias test-mongo)
+ (runtest_alias false)
  (deps ./omong.exe query.json bitcoin_2017_to_2023.csv.head list.js))
